@@ -27,7 +27,6 @@ else
 	SMP=4
 	MEMSIZE=$((12 * 1024))
 	FS=l2.img
-	echo "err !=0"
 fi
 
 usage() {
