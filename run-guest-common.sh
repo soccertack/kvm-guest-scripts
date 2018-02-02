@@ -109,8 +109,10 @@ echo "Using bridged networking"
 VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
 
-if [[ $L0 != 0 ]]; then
-	#Give different mac addr from the one L0 provides
+if [[ $L0 == 1 ]]; then
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:cd"
 	USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:50"
+else
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:ce"
+	USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:51"
 fi
