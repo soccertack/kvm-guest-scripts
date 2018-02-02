@@ -1,8 +1,8 @@
 #!/bin/bash
 
 CONSOLE=mon:stdio
-SMP=4
-MEMSIZE=$((16 * 1024))
+SMP=1
+MEMSIZE=$((1 * 1024))
 KERNEL=Image
 INCOMING=""
 FS=/vmdata/linaro-trusty.img
