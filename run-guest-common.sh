@@ -9,6 +9,26 @@ FS=/vmdata/linaro-trusty.img
 CMDLINE=""
 DUMPDTB=""
 DTB=""
+L0=0
+NESTED=""
+
+ifconfig | grep -q "10.10.1.2 "
+err=$?
+
+if [[ $err == 0 ]]; then
+#L0 specific settings
+	L0=1
+	SMP=6
+	MEMSIZE=$((16 * 1024))
+	FS=/vmdata/linaro-trusty.img
+	NESTED=",nested=true"
+else
+#L1 specific settings
+	SMP=4
+	MEMSIZE=$((12 * 1024))
+	FS=l2.img
+	echo "err !=0"
+fi
 
 usage() {
 	U=""
@@ -83,6 +103,15 @@ do
 	esac
 done
 
+USER_NETDEV="-netdev user,id=net0,hostfwd=tcp::2222-:22"
+USER_NETDEV="$USER_NETDEV -device virtio-net-pci,netdev=net0"
+
 echo "Using bridged networking"
-BRIDGE_IF="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
-BRIDGE_IF="$BRIDGE_IF -device virtio-net-pci,netdev=net1"
+VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
+VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
+
+if [[ $L0 != 0 ]]; then
+	#Give different mac addr from the one L0 provides
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:cd"
+	USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:50"
+fi
