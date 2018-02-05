@@ -11,6 +11,7 @@ DUMPDTB=""
 DTB=""
 L0=0
 NESTED=""
+QEMU="./qemu-system-aarch64"
 
 ifconfig | grep -q "10.10.1.2 "
 err=$?

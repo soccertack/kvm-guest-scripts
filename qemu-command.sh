@@ -1,4 +1,4 @@
-./qemu-system-aarch64 \
+$QEMU \
         -smp $SMP -m $MEMSIZE -machine virt${DUMPDTB} -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
         -drive if=none,file=$FS,id=vda,cache=none,format=raw \
