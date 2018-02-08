@@ -5,6 +5,8 @@ sudo $QEMU	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
 	--nographic	\
+	-qmp unix:/var/run/qmp,server,nowait \
+	-serial $CONSOLE	\
 	$USER_NETDEV	\
 	$VIRTIO_NETDEV	\
 	$IOMMU		\
