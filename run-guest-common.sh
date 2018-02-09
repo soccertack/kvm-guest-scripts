@@ -19,7 +19,7 @@ if [[ $err == 0 ]]; then
 #L0 specific settings
 	L0=1
 	SMP=6
-	MEMSIZE=$((16 * 1024))
+	MEMSIZE=$((24 * 1024))
 	FS=/vmdata/linaro-trusty.img
 	NESTED=",nested=true"
 else
