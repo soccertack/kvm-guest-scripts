@@ -15,6 +15,7 @@ NESTED=""
 if [[ "$ARCH" == "x86_64" ]]; then
 	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
 	FS=/vm/guest0.img
+	MACHINE="q35,accel=kvm"
 else
 	QEMU="./qemu-system-aarch64"
 	FS=/vmdata/linaro-trusty.img
