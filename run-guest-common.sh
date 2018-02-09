@@ -12,15 +12,6 @@ DTB=""
 L0=0
 NESTED=""
 
-if [[ "$ARCH" == "x86_64" ]]; then
-	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
-	FS=/vm/guest0.img
-	MACHINE="q35,accel=kvm"
-else
-	QEMU="./qemu-system-aarch64"
-	FS=/vmdata/linaro-trusty.img
-fi
-
 ifconfig | grep -q "10.10.1.2 "
 err=$?
 
@@ -36,6 +27,15 @@ else
 	SMP=4
 	MEMSIZE=$((12 * 1024))
 	FS=l2.img
+fi
+
+if [[ "$ARCH" == "x86_64" ]]; then
+	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
+	FS=/vm/guest0.img
+	MACHINE="q35,accel=kvm"
+else
+	QEMU="./qemu-system-aarch64"
+	# FS is already set
 fi
 
 usage() {
