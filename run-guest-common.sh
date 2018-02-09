@@ -1,17 +1,24 @@
 #!/bin/bash
 
+ARCH=`uname -m`
 CONSOLE=mon:stdio
 SMP=1
 MEMSIZE=$((1 * 1024))
 KERNEL=Image
 INCOMING=""
-FS=/vmdata/linaro-trusty.img
 CMDLINE=""
 DUMPDTB=""
 DTB=""
 L0=0
 NESTED=""
-QEMU="./qemu-system-aarch64"
+
+if [[ "$ARCH" == "x86_64" ]]; then
+	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
+	FS=/vm/guest0.img
+else
+	QEMU="./qemu-system-aarch64"
+	FS=/vmdata/linaro-trusty.img
+fi
 
 ifconfig | grep -q "10.10.1.2 "
 err=$?

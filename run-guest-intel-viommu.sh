@@ -2,12 +2,6 @@
 
 source run-guest-common.sh
 
-QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
-FS=/vm/guest0.img
-
-SMP=6
-MEMSIZE=$((16 * 1024))
-
 IOMMU="-device intel-iommu,intremap=on,device-iotlb=on"
 IOH="-device ioh3420,id=pcie.1,chassis=1"
 
