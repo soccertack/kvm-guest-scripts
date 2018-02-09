@@ -10,4 +10,4 @@ IOMMU_VIRTIO_NETDEV="$IOMMU_VIRTIO_NETDEV -device virtio-net-pci,netdev=net2,$NE
 
 QEMU="./qemu-smmu/aarch64-softmmu/qemu-system-aarch64"
 
-source qemu-command.sh
+source qemu-command-arm.sh
