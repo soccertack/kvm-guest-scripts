@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ETH=`route | grep "10\." | awk '{ print $8 }'`
+ETH=`route | grep "10\.10\.1\.0" | awk '{ print $8 }'`
 
 echo $ETH
 
