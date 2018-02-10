@@ -12,4 +12,6 @@ sudo $QEMU	\
 	$IOMMU		\
 	$IOH		\
 	$IOMMU_VIRTIO_NETDEV	\
+	$IOH2		\
+	$IOMMU_VIRTIO_NETDEV2	\
 	$VFIO_DEV	\
