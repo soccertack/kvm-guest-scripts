@@ -2,6 +2,12 @@
 
 source run-guest-common.sh
 
-VFIO_DEV="-device vfio-pci,host=00:04.0,id=net2"
+source vfio-common.sh
 
-source qemu-command-arm.sh
+VFIO_DEV="-device vfio-pci,host=$BDF,id=net2"
+
+if [[ "$ARCH" == "x86_64" ]]; then
+	source qemu-command-arm.sh
+else
+	source qemu-command-x86.sh
+fi
