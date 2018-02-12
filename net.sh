@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ETH=`route | grep "10\.10\.1\.0" | awk '{ print $8 }'`
+ETH=`ifconfig | grep "10\.10\." -B1 | head -n 1 | awk '{ print $1 }'`
 
 echo $ETH
 
