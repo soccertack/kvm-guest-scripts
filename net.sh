@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ETH=`ifconfig | grep "10\.10\." -B1 | head -n 1 | awk '{ print $1 }'`
+source common.sh
 
 echo $ETH
 
