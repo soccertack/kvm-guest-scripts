@@ -1,4 +1,14 @@
+source common.sh
 ARCH=`uname -m`
+SRIOV="/sys/class/net/$ETH/device/sriov_numvfs"
+
+function create_vf()
+{
+	VF=`cat $SRIOV`
+	if [[ $VF == 0 ]]; then
+		echo 2 > $SRIOV
+	fi
+}
 
 CLOUD=""
 uname -a | grep -q apt
@@ -13,13 +23,15 @@ err=$?
 if [[ $err == 0 ]]; then
 #L0 specific settings
 	if [[ "$ARCH" == "x86_64" ]]; then
+		create_vf
 		if [[ "$CLOUD" == "APT" ]]; then
 			echo "x86 APT"
 			DEV_ID="15b3 1003"
 			BDF="0000:08:00.0"
 		else
-			DEV_ID="8086 10fb"
-			BDF="0000:06:00.0"
+			DEV_ID="8086 10ed"
+			# This is VF BDF
+			BDF="0000:06:10.0"
 		fi
 		TYPE1_OPTION=""
 		echo "x86 bare-metal passthrough!!"
