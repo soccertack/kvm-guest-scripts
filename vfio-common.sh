@@ -1,6 +1,6 @@
 ARCH=`uname -m`
 
-ifconfig | grep -q "10.10.1.2 "
+ifconfig | grep -q "128\."
 err=$?
 
 if [[ $err == 0 ]]; then
