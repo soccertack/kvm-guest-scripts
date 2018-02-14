@@ -44,8 +44,14 @@ else
 	DEV_ID="1af4 1041"
 
 	if [[ "$ARCH" == "x86_64" ]]; then
-		BDF="0000:01:00.0"
-		BDF_S="0000\:01\:00.0"
+		lspci | grep -q "01:00.0"
+		err=$?
+		if [[ $err == 0 ]]; then
+			BDF="0000:01:00.0"
+		else
+			BDF="0000:00:04.0"
+			DEV_ID="8086 10ed"
+		fi
 		TYPE1_OPTION=""
 	else
 		BDF="0000:00:04.0"
