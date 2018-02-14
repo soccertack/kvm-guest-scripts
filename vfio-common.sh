@@ -1,8 +1,6 @@
 source common.sh
 ARCH=`uname -m`
 SRIOV="/sys/class/net/$ETH/device/sriov_numvfs"
-BDF=""
-BDF2=""
 
 function create_vf()
 {
@@ -34,7 +32,6 @@ if [[ $err == 0 ]]; then
 			DEV_ID="8086 10ed"
 			# This is VF BDF
 			BDF="0000:06:10.0"
-			BDF2="0000:06:10.2"
 		fi
 		TYPE1_OPTION=""
 		echo "x86 bare-metal passthrough!!"
@@ -58,9 +55,6 @@ else
 fi
 
 VFIO_DEV="-device vfio-pci,host=$BDF,id=net2"
-if [[ $BDF2 != "" ]]; then
-	VFIO_DEV2="-device vfio-pci,host=$BDF2,id=net3"
-fi
 
 # Do not provide a normal virtio-net device.
 # Doing that will result in a severe performance drop.
