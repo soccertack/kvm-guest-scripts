@@ -53,3 +53,9 @@ else
 		TYPE1_OPTION="allow_unsafe_interrupts=1"
 	fi
 fi
+
+VFIO_DEV="-device vfio-pci,host=$BDF,id=net2"
+
+# Do not provide a normal virtio-net device.
+# Doing that will result in a severe performance drop.
+VIRTIO_NETDEV=""
