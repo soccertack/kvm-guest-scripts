@@ -1,3 +1,8 @@
+
+VCONSOLE="-chardev socket,server,host=*,nowait,port=6666,telnet,id=mychardev0"
+VCONSOLE="$VCONSOLE -device virtio-serial-device"
+VCONSOLE="$VCONSOLE -device virtconsole,chardev=mychardev0"
+
 $QEMU \
         -smp $SMP -m $MEMSIZE -machine virt${DUMPDTB} -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
@@ -12,5 +17,6 @@ $QEMU \
 	$IOMMU	\
 	$IOMMU_VIRTIO_NETDEV	\
 	$VFIO_DEV	\
+	$VCONSOLE	\
 
 	
