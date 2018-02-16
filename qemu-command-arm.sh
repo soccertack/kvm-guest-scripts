@@ -3,6 +3,8 @@ VCONSOLE="-chardev socket,server,host=*,nowait,port=6666,telnet,id=mychardev0"
 VCONSOLE="$VCONSOLE -device virtio-serial-device"
 VCONSOLE="$VCONSOLE -device virtconsole,chardev=mychardev0"
 
+echo "SMMU: "$SMMU
+
 $QEMU \
         -smp $SMP -m $MEMSIZE -machine $MACHINE -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \

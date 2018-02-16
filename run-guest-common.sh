@@ -11,6 +11,7 @@ DUMPDTB=""
 DTB=""
 L0=0
 NESTED=""
+SMMU="v8"
 
 ifconfig | grep -q "10.10.1.2 "
 err=$?
@@ -52,6 +53,7 @@ usage() {
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
+	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
 	U="$U    -h | --help:           Show this output\n"
@@ -84,6 +86,10 @@ do
 		;;
 	  -a | --append)
 		CMDLINE="$2"
+		shift 2
+		;;
+	  -v | --smmu)
+		SMMU="$2"
 		shift 2
 		;;
 	  --dumpdtb)
