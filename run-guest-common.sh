@@ -36,6 +36,7 @@ if [[ "$ARCH" == "x86_64" ]]; then
 else
 	QEMU="./qemu-system-aarch64"
 	# FS is already set
+	MACHINE="virt${DUMPDTB}"
 fi
 
 usage() {

@@ -4,7 +4,7 @@ VCONSOLE="$VCONSOLE -device virtio-serial-device"
 VCONSOLE="$VCONSOLE -device virtconsole,chardev=mychardev0"
 
 $QEMU \
-        -smp $SMP -m $MEMSIZE -machine virt${DUMPDTB} -cpu host,$NESTED \
+        -smp $SMP -m $MEMSIZE -machine $MACHINE -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
         -drive if=none,file=$FS,id=vda,cache=none,format=raw \
         -device virtio-blk-pci,drive=vda \
