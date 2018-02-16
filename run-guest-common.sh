@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source common.sh
+
 ARCH=`uname -m`
 CONSOLE=mon:stdio
 SMP=1
