@@ -13,7 +13,7 @@ DUMPDTB=""
 DTB=""
 L0=0
 NESTED=""
-SMMU="v8"
+SMMU="v9"
 
 ifconfig | grep -q "10.10.1.2 "
 err=$?
