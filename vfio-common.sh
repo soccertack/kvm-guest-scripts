@@ -53,6 +53,8 @@ else
 			DEV_ID="8086 10ed"
 		fi
 		TYPE1_OPTION=""
+		# Enable this option if you want not to use irq-remapping on x86
+		#TYPE1_OPTION="allow_unsafe_interrupts=1"
 	else
 		BDF="0000:00:04.0"
 		BDF_S="0000\:00\:04.0"
