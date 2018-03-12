@@ -15,7 +15,7 @@ L0=0
 NESTED=""
 SMMU="v8"
 
-ifconfig | grep -q "10.10.1.2 "
+uname -n | grep -q cloudlab
 err=$?
 
 if [[ $err == 0 ]]; then
