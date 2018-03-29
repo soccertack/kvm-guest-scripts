@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if [[ -n $VIRTIO_NETDEV ]]; then
+	./net.sh
+fi
+
+if [[ -n $IOMMU_VIRTIO_NETDEV ]]; then
+	./net.sh
+fi
+
+if [[ -n $VIOMMU_VIRTIO_NETDEV2 ]]; then
+	./net.sh
+fi
+
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
 echo "MEMSIZE: "$MEMSIZE

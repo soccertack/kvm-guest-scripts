@@ -4,6 +4,13 @@ source common.sh
 
 echo $ETH
 
+ifconfig br0 > /dev/null 2>&1
+err=$?
+if [[ $err == 0 ]]; then
+	echo "A bridge br0 already exists"
+	exit 0
+fi
+
 ifconfig $ETH > /dev/null 2>&1
 err=$?
 if [[ $err != 0 ]]; then

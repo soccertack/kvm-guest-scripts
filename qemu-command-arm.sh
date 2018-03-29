@@ -5,6 +5,10 @@ VCONSOLE="$VCONSOLE -device virtconsole,chardev=mychardev0"
 
 echo "SMMU: "$SMMU
 
+if [[ -n $VIRTIO_NETDEV ]]; then
+	./net.sh
+fi
+
 $QEMU \
         -smp $SMP -m $MEMSIZE -machine $MACHINE -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
