@@ -5,6 +5,9 @@ VCONSOLE="$VCONSOLE -device virtconsole,chardev=mychardev0"
 
 echo "SMMU: "$SMMU
 
+#CONSOLE="telnet:127.0.0.1:4444,server,nowait"
+#MON="-monitor stdio"
+
 if [[ -n $VIRTIO_NETDEV ]]; then
 	./net.sh
 fi
@@ -24,5 +27,6 @@ $QEMU \
 	$IOMMU_VIRTIO_NETDEV	\
 	$VFIO_DEV	\
 	$VCONSOLE	\
+	$MON		\
 
 	
