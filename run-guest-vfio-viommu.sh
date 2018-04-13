@@ -2,7 +2,7 @@
 
 source run-guest-common.sh
 
-source vfio-common.sh
+source setup-vfio.sh
 
 if [[ "$ARCH" == "x86_64" ]]; then
 	IOMMU="-device intel-iommu,intremap=on,caching-mode=on"
