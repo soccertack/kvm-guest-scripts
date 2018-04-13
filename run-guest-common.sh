@@ -10,7 +10,6 @@ INCOMING=""
 CMDLINE="earlycon=pl011,0x09000000"
 DUMPDTB=""
 DTB=""
-L0=0
 NESTED=""
 SMMU="v8"
 
@@ -20,7 +19,6 @@ err=$?
 
 if [[ $err == 0 ]]; then
 #L0 specific settings
-	L0=1
 	FS=/vmdata/linaro-trusty.img
 	NESTED=",nested=true"
 else
@@ -131,10 +129,10 @@ echo "Using bridged networking"
 VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
 
-if [[ $L0 == 1 ]]; then
-	VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:cd"
-	USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:50"
-else
-	VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:ce"
-	USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:51"
-fi
+# Let's make mac addresses unique across all virtualization levels
+# We should be fine for 5 levels of virt :)
+# This trick may break if we assign random number of cpus, though.
+MAC_POSTFIX=`expr $SMP \% 10`
+
+VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:c"$MAC_POSTFIX
+USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:5"$MAC_POSTFIX
