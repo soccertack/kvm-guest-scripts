@@ -6,6 +6,7 @@ ARCH=`uname -m`
 CONSOLE=mon:stdio
 KERNEL=Image
 INCOMING=""
+# This is not effective on x86
 CMDLINE="earlycon=pl011,0x09000000"
 DUMPDTB=""
 DTB=""
@@ -13,6 +14,7 @@ L0=0
 NESTED=""
 SMMU="v8"
 
+#Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
 err=$?
 
