@@ -14,7 +14,7 @@ fi
 
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
-echo "MEMSIZE: "$MEMSIZE
+echo "MEMSIZE: "${MEMSIZE}G
 echo "MACHINE: "$MACHINE
 echo "IOMMU: "$IOMMU
 echo "VIRTIO-net: "$VIRTIO_NETDEV
@@ -24,7 +24,7 @@ echo "IOMMU_VIRTIO_NETDEV: " $IOMMU_VIRTIO_NETDEV
 echo "IOMMU_VIRTIO_NETDEV2: " $IOMMU_VIRTIO_NETDEV2
 echo "---------- QEMU setup end ---------"
 sudo $QEMU	\
-	-smp $SMP -m $MEMSIZE -M $MACHINE -cpu host	\
+	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
 	--nographic	\

@@ -4,7 +4,6 @@ source common.sh
 
 ARCH=`uname -m`
 CONSOLE=mon:stdio
-MEMSIZE=$((1 * 1024))
 KERNEL=Image
 INCOMING=""
 CMDLINE="earlycon=pl011,0x09000000"
@@ -34,7 +33,6 @@ SMP=`expr $HOST_CPU - 2`
 # e.g. L2 got 12G, and L1 got 24G and L0 got 36G
 # memsize = 12 + (smp - 4) / 2 * 12
 MEMSIZE=`expr $SMP \* 6 - 12`
-MEMSIZE=`expr $MEMSIZE \* 1024`
 
 if [[ "$ARCH" == "x86_64" ]]; then
 	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
@@ -54,7 +52,7 @@ usage() {
 	U="${U}Usage: $0 [options]\n\n"
 	U="${U}Options:\n"
 	U="$U    -c | --CPU <nr>:       Number of cores (default ${SMP})\n"
-	U="$U    -m | --mem <MB>:       Memory size (default ${MEMSIZE})\n"
+	U="$U    -m | --mem <GB>:       Memory size (default ${MEMSIZE})\n"
 	U="$U    -k | --kernel <Image>: Use kernel image (default ${KERNEL})\n"
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"

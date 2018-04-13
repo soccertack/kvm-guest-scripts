@@ -13,7 +13,7 @@ if [[ -n $VIRTIO_NETDEV ]]; then
 fi
 
 $QEMU \
-        -smp $SMP -m $MEMSIZE -machine $MACHINE -cpu host,$NESTED \
+        -smp $SMP -m ${MEMSIZE}G -machine $MACHINE -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
         -drive if=none,file=$FS,id=vda,cache=none,format=raw \
         -device virtio-blk-pci,drive=vda \
