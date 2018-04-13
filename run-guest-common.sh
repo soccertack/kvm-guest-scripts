@@ -4,7 +4,6 @@ source common.sh
 
 ARCH=`uname -m`
 CONSOLE=mon:stdio
-SMP=1
 MEMSIZE=$((1 * 1024))
 KERNEL=Image
 INCOMING=""
@@ -21,16 +20,21 @@ err=$?
 if [[ $err == 0 ]]; then
 #L0 specific settings
 	L0=1
-	SMP=6
-	MEMSIZE=$((24 * 1024))
 	FS=/vmdata/linaro-trusty.img
 	NESTED=",nested=true"
 else
 #L1 specific settings
-	SMP=4
-	MEMSIZE=$((12 * 1024))
 	FS=l2.img
 fi
+
+HOST_CPU=`nproc`
+SMP=`expr $HOST_CPU - 2`
+
+# 12 (default) + 12G per each virt level
+# e.g. L2 got 12G, and L1 got 24G and L0 got 36G
+# memsize = 12 + (smp - 4) / 2 * 12
+MEMSIZE=`expr $SMP \* 6 - 12`
+MEMSIZE=`expr $MEMSIZE \* 1024`
 
 if [[ "$ARCH" == "x86_64" ]]; then
 	QEMU=./qemu/x86_64-softmmu/qemu-system-x86_64
