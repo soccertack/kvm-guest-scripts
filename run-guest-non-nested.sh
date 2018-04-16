@@ -2,8 +2,6 @@
 
 source run-guest-common.sh
 
-SMP=4
-MEMSIZE=12
 NESTED=""
 
 if [[ "$ARCH" == "x86_64" ]]; then
