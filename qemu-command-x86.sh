@@ -24,6 +24,7 @@ echo "IOMMU_VIRTIO_NETDEV: " $IOMMU_VIRTIO_NETDEV
 echo "IOMMU_VIRTIO_NETDEV2: " $IOMMU_VIRTIO_NETDEV2
 echo "---------- QEMU setup end ---------"
 sudo $QEMU	\
+	$IOMMU		\
 	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
@@ -32,7 +33,6 @@ sudo $QEMU	\
 	-serial $CONSOLE	\
 	$USER_NETDEV	\
 	$VIRTIO_NETDEV	\
-	$IOMMU		\
 	$IOH		\
 	$IOMMU_VIRTIO_NETDEV	\
 	$IOH2		\
