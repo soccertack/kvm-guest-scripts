@@ -27,6 +27,7 @@ sudo $QEMU	\
 	$IOMMU		\
 	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
+	-drive if=none,file=DomU.img,id=vdb,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
 	--nographic	\
 	-qmp unix:/var/run/qmp,server,nowait \
