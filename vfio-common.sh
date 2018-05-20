@@ -39,8 +39,10 @@ elif [[ "$BDF_P" == "" && "$BDF_V" == "" ]]; then
 	echo "We have no device to assign to a VM."
 	exit
 elif [[ "$BDF_P" != "" ]]; then
+	echo "Physical passthrough."
 	BDF=$BDF_P
 else
+	echo "Virtual-passthrough. Yeah!"
 	BDF=$BDF_V
 fi
 
