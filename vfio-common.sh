@@ -52,6 +52,8 @@ if [[ "$ARCH" == "aarch64" ]]; then
 	TYPE1_OPTION="allow_unsafe_interrupts=1"
 fi
 
+BDF=0000:$BDF
+
 echo "BDF: "$BDF
 echo "DEV_ID: "$DEV_ID
 
