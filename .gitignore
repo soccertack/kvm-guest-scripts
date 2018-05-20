@@ -1,0 +1,7 @@
+*.*swp
+*.vim_mru_files
+qemu-[^c]*
+qemu
+ubuntu-14.04.2-server-amd64.iso
+install-vm.sh
+mkfs.sh
