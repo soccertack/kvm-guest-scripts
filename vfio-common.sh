@@ -1,5 +1,4 @@
 source common.sh
-ARCH=`uname -m`
 SRIOV="/sys/class/net/$ETH/device/sriov_numvfs"
 
 function create_vf()

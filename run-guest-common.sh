@@ -2,7 +2,6 @@
 
 source common.sh
 
-ARCH=`uname -m`
 CONSOLE=mon:stdio
 KERNEL=Image
 INCOMING=""
