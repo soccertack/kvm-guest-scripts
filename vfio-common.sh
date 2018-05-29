@@ -30,8 +30,13 @@ fi
 # This physical network device is for Wisc machines.
 BDF_P=`lspci | grep 82599.*Virtual.Function | head -1 | awk '{ print $1 }'`
 BDF_V=`lspci | grep Red.Hat.*1041 | awk '{ print $1 }'`
+BDF_E=`lspci | grep 82540EM  | awk '{ print $1 }'`
 
-if [[ "$BDF_P" != "" && "$BDF_V" != "" ]]; then
+
+if [[ "$BDF_E" != "" ]]; then
+	echo "Virtual-passthrough with the emulated device"
+	BDF=$BDF_E
+elif [[ "$BDF_P" != "" && "$BDF_V" != "" ]]; then
 	echo "We have VF and virtio-net. Not sure what we want to do"
 	exit
 elif [[ "$BDF_P" == "" && "$BDF_V" == "" ]]; then
