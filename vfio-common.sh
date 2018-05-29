@@ -30,8 +30,9 @@ fi
 # This physical network device is for Wisc machines.
 BDF_P=`lspci | grep 82599.*Virtual.Function | head -1 | awk '{ print $1 }'`
 BDF_V=`lspci | grep Red.Hat.*1041 | awk '{ print $1 }'`
-BDF_E=`lspci | grep 82540EM  | awk '{ print $1 }'`
-
+#e1000 doesn't work
+#BDF_E=`lspci | grep 82540EM  | awk '{ print $1 }'`
+BDF_E=`lspci | grep Realtek.*8139 | awk '{ print $1 }'`
 
 if [[ "$BDF_E" != "" ]]; then
 	echo "Virtual-passthrough with the emulated device"
