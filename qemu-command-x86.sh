@@ -39,3 +39,8 @@ sudo $QEMU	\
 	$IOMMU_VIRTIO_NETDEV2	\
 	$VFIO_DEV	\
 	-monitor telnet::6666,server,nowait \
+	-trace enable=vtd_err*,file=pi\
+	-trace enable=vtd_pi_setup_irq,file=pi\
+	-trace enable=vtd_ir_remap,file=pi\
+	-trace enable=vtd_ir_irte_get,file=pi\
+	-trace enable=vtd_irq_generate,file=pi\
