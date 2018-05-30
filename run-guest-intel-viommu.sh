@@ -18,6 +18,9 @@ IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2 -device virtio-net-pci,netdev=net2,b
 
 MACHINE="q35,accel=kvm,kernel-irqchip=split"
 
+QEMU="./qemu-posted/x86_64-softmmu/qemu-system-x86_64"
+IOMMU="$IOMMU,intpost=on"
+
 #Uncomment below if you want to run Xen as a guest hypervisor
 #QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
 source qemu-command-x86.sh
