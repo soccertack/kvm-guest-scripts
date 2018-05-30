@@ -38,3 +38,4 @@ sudo $QEMU	\
 	$IOH2		\
 	$IOMMU_VIRTIO_NETDEV2	\
 	$VFIO_DEV	\
+	-monitor telnet::6666,server,nowait \
