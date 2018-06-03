@@ -12,6 +12,7 @@ if [[ -n $VIOMMU_VIRTIO_NETDEV2 ]]; then
 	./net.sh
 fi
 
+SMP=1
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
 echo "MEMSIZE: "${MEMSIZE}G
@@ -23,6 +24,16 @@ echo "VFIO_DEV2: "$VFIO_DEV2
 echo "IOMMU_VIRTIO_NETDEV: " $IOMMU_VIRTIO_NETDEV
 echo "IOMMU_VIRTIO_NETDEV2: " $IOMMU_VIRTIO_NETDEV2
 echo "---------- QEMU setup end ---------"
+sleep 3
+
+#	-trace enable=vtd_err*,file=pi\
+#	-trace enable=vtd_pi_setup_irq,file=pi\
+#	-trace enable=vtd_ir_remap,file=pi\
+#	-trace enable=vtd_ir_irte_get,file=pi\
+#	-trace enable=vtd_irq_generate,file=pi\
+#	-trace enable=vtd_ir_remap*,file=pi\
+#	-trace enable=vtd_mem_ir_write,file=pi\
+#	-trace enable=kvm_dbg,file=pi\
 sudo $QEMU	\
 	$IOMMU		\
 	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host	\
@@ -39,8 +50,5 @@ sudo $QEMU	\
 	$IOMMU_VIRTIO_NETDEV2	\
 	$VFIO_DEV	\
 	-monitor telnet::6666,server,nowait \
-	-trace enable=vtd_err*,file=pi\
-	-trace enable=vtd_pi_setup_irq,file=pi\
-	-trace enable=vtd_ir_remap,file=pi\
-	-trace enable=vtd_ir_irte_get,file=pi\
-	-trace enable=vtd_irq_generate,file=pi\
+	-trace enable=kvm_dbg*\
+	-trace enable=vtd_err_*\
