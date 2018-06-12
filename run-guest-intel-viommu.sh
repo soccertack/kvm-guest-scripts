@@ -13,12 +13,12 @@ NETDEV_IOMMU_OPTION="iommu_platform=on,disable-modern=off,disable-legacy=on,ats=
 #VIRTIO_NETDEV=""
 
 IOH2="-device ioh3420,id=pcie.1,chassis=2"
-IOMMU_VIRTIO_NETDEV2="-netdev tap,id=net2,vhost=off"
+IOMMU_VIRTIO_NETDEV2="-netdev tap,id=net2,vhost=on"
 IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2 -device virtio-net-pci,netdev=net2,bus=pcie.1,$NETDEV_IOMMU_OPTION"
 
 MACHINE="q35,accel=kvm,kernel-irqchip=split"
 
-QEMU="./qemu-posted/x86_64-softmmu/qemu-system-x86_64"
+QEMU="./qemu-posted-2.11/x86_64-softmmu/qemu-system-x86_64"
 IOMMU="$IOMMU,intpost=on"
 
 #Uncomment below if you want to run Xen as a guest hypervisor

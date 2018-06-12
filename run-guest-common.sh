@@ -125,7 +125,7 @@ USER_NETDEV="-netdev user,id=net0,hostfwd=tcp::2222-:22"
 USER_NETDEV="$USER_NETDEV -device virtio-net-pci,netdev=net0"
 
 echo "Using bridged networking"
-VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
+VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=off"
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
 
 # Let's make mac addresses unique across all virtualization levels
