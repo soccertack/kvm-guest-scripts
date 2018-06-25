@@ -5,8 +5,12 @@ function create_vf()
 {
 	VF=`cat $SRIOV`
 	if [[ $VF == 0 ]]; then
+		echo "We are about to create two physical VFs"
 		echo 2 > $SRIOV
 	fi
+
+	VF=`cat $SRIOV`
+	echo "We have physical VFs: $VF"
 }
 
 CLOUD=""
@@ -28,7 +32,7 @@ fi
 
 # TODO: test this on ARM and remove this comment!
 # This physical network device is for Wisc machines.
-BDF_P=`lspci | grep 82599.*Virtual.Function | head -1 | awk '{ print $1 }'`
+BDF_P=`lspci | grep Virtual.Function | head -1 | awk '{ print $1 }'`
 BDF_V=`lspci | grep Red.Hat.*1041 | awk '{ print $1 }'`
 #e1000 doesn't work
 #BDF_E=`lspci | grep 82540EM  | awk '{ print $1 }'`
