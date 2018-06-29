@@ -57,6 +57,7 @@ usage() {
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
+	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
 	U="$U    -h | --help:           Show this output\n"
@@ -95,6 +96,10 @@ do
 		SMMU="$2"
 		shift 2
 		;;
+	  -q | --mq)
+		MQ_NUM="$2"
+		shift 2
+		;;
 	  --dumpdtb)
 		DUMPDTB=",dumpdtb=$2"
 		shift 2
@@ -125,8 +130,17 @@ USER_NETDEV="-netdev user,id=net0,hostfwd=tcp::2222-:22"
 USER_NETDEV="$USER_NETDEV -device virtio-net-pci,netdev=net0"
 
 echo "Using bridged networking"
-VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
+#VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
+VIRTIO_NETDEV="-netdev tap,id=net1,vhost=on"
+if [ ! -z "$MQ_NUM" ]; then
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,queues=$MQ_NUM"
+fi
+
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
+if [ ! -z "$MQ_NUM" ]; then
+	VECTOR_NUM=`expr 2 \* "$MQ_NUM" + 2`
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,mq=on,vectors=$VECTOR_NUM"
+fi
 
 # Let's make mac addresses unique across all virtualization levels
 # We should be fine for 5 levels of virt :)
