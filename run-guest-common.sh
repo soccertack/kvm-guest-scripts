@@ -130,10 +130,11 @@ USER_NETDEV="-netdev user,id=net0,hostfwd=tcp::2222-:22"
 USER_NETDEV="$USER_NETDEV -device virtio-net-pci,netdev=net0"
 
 echo "Using bridged networking"
-#VIRTIO_NETDEV="-netdev tap,id=net1,helper=/srv/vm/qemu/qemu-bridge-helper,vhost=on"
 VIRTIO_NETDEV="-netdev tap,id=net1,vhost=on"
 if [ ! -z "$MQ_NUM" ]; then
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,queues=$MQ_NUM"
+else
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,helper=/srv/vm/qemu/qemu-bridge-helper"
 fi
 
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
