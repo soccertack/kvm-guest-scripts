@@ -52,6 +52,8 @@ usage() {
 	U="${U}Options:\n"
 	U="$U    -c | --CPU <nr>:       Number of cores (default ${SMP})\n"
 	U="$U    -m | --mem <GB>:       Memory size (default ${MEMSIZE})\n"
+	U="$U    -s | --migration-src:   Run the guest as the migration source\n"
+	U="$U    -t | --migration-dst <PortNum> : run the guest as the migration dest\n"
 	U="$U    -k | --kernel <Image>: Use kernel image (default ${KERNEL})\n"
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
@@ -74,6 +76,14 @@ do
 		;;
 	  -m | --mem)
 		MEMSIZE="$2"
+		shift 2
+		;;
+	  -s | --migration-src)
+		M_SRC=1
+		shift 1
+		;;
+	  -t | --migration-dst)
+		M_PORT="$2"
 		shift 2
 		;;
 	  -k | --kernel)
@@ -150,3 +160,20 @@ MAC_POSTFIX=`expr $SMP \% 10`
 
 VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:c"$MAC_POSTFIX
 USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:5"$MAC_POSTFIX
+
+# Migration related settings
+if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
+	if [ -n "$M_SRC" ]; then
+		TELNET_PORT=4444
+	else
+		TELNET_PORT=4445
+		MIGRAION="-incoming tcp:0:$M_PORT"
+
+		# Tweak params which conflict with the source
+		USER_NETDEV=`echo $USER_NETDEV | sed  "s/2222/2223/"`
+		USER_NETDEV=`echo $USER_NETDEV | sed  "s/ef:41/ef:42/"`
+	fi
+
+	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
+	MON="-monitor stdio"
+fi
