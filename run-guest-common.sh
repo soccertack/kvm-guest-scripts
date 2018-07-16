@@ -176,4 +176,5 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
+	FS=/sdc/guest0.img
 fi
