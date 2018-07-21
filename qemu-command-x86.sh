@@ -25,7 +25,7 @@ echo "IOMMU_VIRTIO_NETDEV2: " $IOMMU_VIRTIO_NETDEV2
 echo "---------- QEMU setup end ---------"
 sudo $QEMU	\
 	$IOMMU		\
-	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host	\
+	-smp $SMP -m ${MEMSIZE}G -M $MACHINE -cpu host$CPU_HV	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
 	--nographic	\
@@ -40,3 +40,4 @@ sudo $QEMU	\
 	$VFIO_DEV	\
 	$MON		\
 	$MIGRAION	\
+	$WINDOWS_OPTIONS	\

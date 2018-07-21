@@ -60,6 +60,7 @@ usage() {
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
+	U="$U    --win:		       Run windows guest\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
 	U="$U    -h | --help:           Show this output\n"
@@ -118,6 +119,10 @@ do
 		DTB="-dtb $2"
 		shift 2
 		;;
+	  --win)
+	  	WINDOWS=1
+		shift 1
+		;;
 	  -h | --help)
 		usage ""
 		exit 1
@@ -162,10 +167,9 @@ VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:c"$MAC_POSTFIX
 USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:5"$MAC_POSTFIX
 
 # Migration related settings
+TELNET_PORT=4444
 if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
-	if [ -n "$M_SRC" ]; then
-		TELNET_PORT=4444
-	else
+	if [ -n "$M_PORT" ]; then
 		TELNET_PORT=4445
 		MIGRAION="-incoming tcp:0:$M_PORT"
 
@@ -177,4 +181,22 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
 	FS=/sdc/guest0.img
+
+	if [ "$WINDOWS" == 1 ]; then
+		echo "We don't support Windows migration yet"
+		# TODO: just set FS correctly.
+		exit
+	fi
 fi
+
+if [ "$WINDOWS" == 1 ]; then
+	FS=/sdc/win.img
+	CPU_HV=",hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time"
+	WINDOWS_OPTIONS=""
+	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -usb -device usb-tablet"
+	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -rtc base=localtime,clock=host"
+	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -vnc 127.0.0.1:2"
+	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
+	MON="-monitor stdio"
+fi
+	
