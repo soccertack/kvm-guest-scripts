@@ -191,11 +191,16 @@ fi
 
 if [ "$WINDOWS" == 1 ]; then
 	FS=/sdc/win.img
+	WIN_ISO=en_windows_server_2016_updated_feb_2018_x64_dvd_11636692.iso
+	VIRTIO_ISO=virtio-win.iso
 	CPU_HV=",hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time"
 	WINDOWS_OPTIONS=""
 	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -usb -device usb-tablet"
 	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -rtc base=localtime,clock=host"
 	WINDOWS_OPTIONS="$WINDOWS_OPTIONS -vnc 127.0.0.1:2"
+	#WINDOWS_OPTIONS="$WINDOWS_OPTIONS --cdrom ${WIN_ISO}"
+	#WINDOWS_OPTIONS="$WINDOWS_OPTIONS --drive file=${VIRTIO_ISO},index=3,media=cdrom"
+	WINDOWS_OPTIONS="$WINDOWS_OPTIONS --cdrom ${VIRTIO_ISO}"
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
 fi
