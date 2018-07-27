@@ -162,32 +162,30 @@ if connection is None:
 # Wait for other clients ready
 wait_for_clients(connection, "Dest ready")
 
-# Start the destination QEMU
-connection.send("Dest run")
-wait_for_clients(connection, "Dest running")
+for i in (0, 10):
+	# Start the destination QEMU
+	connection.send("Dest run")
+	wait_for_clients(connection, "Dest running")
 
-# Start QEMU
-qemu_child = start_qemu(iovirt)
-wait_for_qemu_shell(qemu_child)
+	# Start QEMU
+	qemu_child = start_qemu(iovirt)
+	wait_for_qemu_shell(qemu_child)
 
-# Start telnet
-telnet_child = start_telnet()
+	# Start telnet
+	telnet_child = start_telnet()
 
-# Make sure we have L1 console
-telnet_child.sendline('')
-wait_for_L1_shell(telnet_child)
+	# Make sure we have L1 console
+	telnet_child.sendline('')
+	wait_for_L1_shell(telnet_child)
 
-# Start nested VM in telnet
-boot_nvm(iovirt, telnet_child)
-wait_for_L2_shell(telnet_child)
-# Nested VM boot completed at this point
+	# Start nested VM in telnet
+	boot_nvm(iovirt, telnet_child)
+	wait_for_L2_shell(telnet_child)
+	# Nested VM boot completed at this point
 
-do_migration(telnet_child, qemu_child)
+	do_migration(telnet_child, qemu_child)
+	connection.send("Migration done")
+	wait_for_clients(connection, "Dest shutdown")
 
-# TODO: send message to the dest
-
-qemu_child.sendline('quit')
-
-# Shutdown the virtual machine (L2 and L1)
-#shutdown_vm(telnet_child)
+	qemu_child.sendline('quit')
 
