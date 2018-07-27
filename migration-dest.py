@@ -9,7 +9,7 @@ import argparse
 import re
 
 def wait_for_L0_shell(child):
-	child.expect('kvm-node.*')
+	child.expect('kvm-dest.*')
 
 def wait_for_L1_shell(child):
 	child.expect('\[L1.*\]')
@@ -42,18 +42,14 @@ def get_iovirt():
 
 def boot_vm(iovirt, child):
 
-	mylevel = 0
-	if iovirt == "vp":
-		child.sendline('cd /srv/vm && ./run-guest-viommu.sh -s')
-	elif iovirt == "pv":
-		child.sendline('cd /srv/vm && ./run-guest.sh -s')
-	elif iovirt == "pt":
-		if level == 1:
-			child.sendline('cd /srv/vm && ./run-guest-vfio.sh -s')
-		else:
-			child.sendline('cd /srv/vm && ./run-guest-vfio-viommu.sh -s')
+	option = "-t 5555"
 
-	return
+	if iovirt == "vp":
+		child.sendline('cd /srv/vm && ./run-guest-viommu.sh %s' % option)
+	elif iovirt == "pv":
+		child.sendline('cd /srv/vm && ./run-guest.sh %s' % option)
+	elif iovirt == "pt":
+		child.sendline('cd /srv/vm && ./run-guest-vfio.sh %s' % option)
 
 def boot_nvm(iovirt, child):
 	if iovirt == "vp" or iovirt == "pt":
@@ -80,7 +76,7 @@ def start_telnet():
 
 	telnet_child.sendline('')
 	wait_for_L0_shell(telnet_child)
-	telnet_child.sendline('telnet localhost 4444')
+	telnet_child.sendline('telnet localhost 4445')
 
 	return telnet_child
 
@@ -121,11 +117,7 @@ clientsocket = connect_to_server()
 clientsocket.send('Dest ready')
 wait_for_msg(clientsocket, "Dest run")
 
-print ("yes")
-
-sys.exit(0)
-
-
+# TODO get this from the server
 level = get_level()
 iovirt = get_iovirt()
 
@@ -133,21 +125,20 @@ iovirt = get_iovirt()
 qemu_child = start_qemu(iovirt)
 wait_for_qemu_shell(qemu_child)
 
+clientsocket.send('Dest running')
+
+wait_for_msg(clientsocket, "Migration done")
+
+# TODO: 
+# Shutdown the virtual machine (L2 and L1)
 # Start telnet
 telnet_child = start_telnet()
+print ("Started console")
 
-# Make sure we have L1 console
+# Make sure we have L2 console
 telnet_child.sendline('')
-wait_for_L1_shell(telnet_child)
-
-# Start nested VM in telnet
-boot_nvm(iovirt, telnet_child)
 wait_for_L2_shell(telnet_child)
-# Nested VM boot completed at this point
+print ("console working")
 
-# Do some job
-do_some_job(telnet_child, qemu_child)
-
-# Shutdown the virtual machine (L2 and L1)
 shutdown_vm(telnet_child)
 
