@@ -28,7 +28,7 @@ def get_iovirt():
 	return iovirt
 
 
-def boot_vm(iovirt):
+def boot_vm(iovirt, child):
 
 	mylevel = 0
 	if iovirt == "vp":
@@ -58,14 +58,14 @@ def boot_nvm(iovirt, child):
 level = get_level()
 iovirt = get_iovirt()
 
-child = pexpect.spawn('bash')
+qemu_child = pexpect.spawn('bash')
 fout = file('mylog.txt','w')
-child.logfile = fout
-child.timeout=None
+qemu_child.logfile = fout
+qemu_child.timeout=None
 
-child.sendline('')
-child.expect('kvm-node.*')
-boot_vm(iovirt)
+qemu_child.sendline('')
+qemu_child.expect('kvm-node.*')
+boot_vm(iovirt, qemu_child)
 
 telnet_child = pexpect.spawn('bash')
 telnet_child.logfile = sys.stdout
@@ -89,15 +89,15 @@ telnet_child.sendline('ls')
 telnet_child.expect('L2.*$')
 
 ree = re.compile('\(qemu\)')
-child.sendline('help')
-child.expect('\(qemu\)')
-#child.expect(ree)
-child.sendline('abde')
-child.expect('\(qemu\)')
-#child.expect(ree)
-child.sendline('help')
-child.expect('\(qemu\)')
-#child.expect(ree)
+qemu_child.sendline('help')
+qemu_child.expect('\(qemu\)')
+#qemu_child.expect(ree)
+qemu_child.sendline('abde')
+qemu_child.expect('\(qemu\)')
+#qemu_child.expect(ree)
+qemu_child.sendline('help')
+qemu_child.expect('\(qemu\)')
+#qemu_child.expect(ree)
 
 telnet_child.sendline('h')
 telnet_child.expect('L1.*$')
