@@ -8,6 +8,8 @@ import socket
 import argparse
 import re
 
+LOCAL_SOCKET = 8890
+
 def wait_for_L0_shell(child):
 	child.expect('kvm-node.*')
 
@@ -85,6 +87,7 @@ def start_telnet():
 	return telnet_child
 
 def do_some_job(telnet_child, qemu_child):
+	# TODO: run migration command and wait for it completed.
 	sec = 5
 	print ("Wait for %d seconds" % sec)
 	time.sleep(sec)
@@ -100,9 +103,50 @@ def shutdown_vm(child):
 	child.sendline('h')
 	wait_for_L0_shell(child)
 
+def start_server():
+	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+	print ("Try to bind...")
+	try:
+		serversocket.bind(('', 8889))
+	except socket.error:
+		return
+	print ("Done.")
+
+	print ("Try to listen...")
+	serversocket.listen(1) # become a server socket.
+	print ("Done.")
+
+	print ("Try to accept...")
+	connection, address = serversocket.accept()
+	print ("Done.")
+
+	return connection
+
+def wait_for_clients(connection, msg):
+
+	print ("Waiting for clients.")
+	while True:
+	    buf = connection.recv(64)
+	    if len(buf) > 0:
+		print buf
+		if buf == msg:
+			break	
 
 level = get_level()
 iovirt = get_iovirt()
+
+# Start the server
+connection = start_server()
+if connection is None:
+	sys.exit(0)
+
+# Wait for other clients ready
+wait_for_clients(connection, "Dest ready")
+
+# Start the destination QEMU
+connection.send("Dest run")
+wait_for_clients(connection, "Dest running")
 
 # Start QEMU
 qemu_child = start_qemu(iovirt)
