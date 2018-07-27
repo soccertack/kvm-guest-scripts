@@ -86,16 +86,34 @@ def start_telnet():
 
 	return telnet_child
 
+def do_migration(telnet_child, qemu_child):
+	qemu_child.sendline('migrate -d tcp:kvm-dest:5555')
+	wait_for_qemu_shell(qemu_child)
+
+	while (1):
+		qemu_child.sendline('info migrate')
+		wait_for_qemu_shell(qemu_child)
+		print (qemu_child.before)
+
+		if "Migration status: completed" in qemu_child.before:
+			print ("Migration done")
+			break
+
+		time.sleep(5)
+
 def do_some_job(telnet_child, qemu_child):
 	# TODO: run migration command and wait for it completed.
 	sec = 5
 	print ("Wait for %d seconds" % sec)
 	time.sleep(sec)
-	telnet_child.sendline('ls')
-	wait_for_L2_shell(telnet_child)
 
-	qemu_child.sendline('help')
+	qemu_child.sendline('migrate -d tcp:kvm-dest:5555')
 	wait_for_qemu_shell(qemu_child)
+
+	sec = 60
+	print ("Wait for %d seconds" % sec)
+	time.sleep(sec)
+
 
 def shutdown_vm(child):
 	child.sendline('h')
@@ -164,9 +182,12 @@ boot_nvm(iovirt, telnet_child)
 wait_for_L2_shell(telnet_child)
 # Nested VM boot completed at this point
 
-# Do some job
-do_some_job(telnet_child, qemu_child)
+do_migration(telnet_child, qemu_child)
+
+# TODO: send message to the dest
+
+qemu_child.sendline('quit')
 
 # Shutdown the virtual machine (L2 and L1)
-shutdown_vm(telnet_child)
+#shutdown_vm(telnet_child)
 
