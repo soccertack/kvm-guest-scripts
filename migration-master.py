@@ -8,6 +8,18 @@ import socket
 import argparse
 import re
 
+def wait_for_L0_shell(child):
+	child.expect('kvm-node.*')
+
+def wait_for_L1_shell(child):
+	child.expect('\[L1.*\]')
+
+def wait_for_L2_shell(child):
+	child.expect('\[L2.*\]')
+
+def wait_for_qemu_shell(child):
+	child.expect('\(qemu\)')
+
 def get_level():
 	level  = int(raw_input("Enter virtualization level [2]: ") or "2")
 	if level < 1:
@@ -49,62 +61,68 @@ def boot_nvm(iovirt, child):
 	else:
 		child.sendline('cd ~/vm && ./run-guest.sh')
 
-	child.expect('\[L2.*\]')
-
 def start_qemu(iovirt):
-
 	qemu_child = pexpect.spawn('bash')
 	fout = file('mylog.txt','w')
 	qemu_child.logfile = fout
 	qemu_child.timeout=None
 
 	qemu_child.sendline('')
-	qemu_child.expect('kvm-node.*')
+	wait_for_L0_shell(qemu_child)
 	boot_vm(iovirt, qemu_child)
 
 	return qemu_child
+
+def start_telnet():
+	telnet_child = pexpect.spawn('bash')
+	telnet_child.logfile = sys.stdout
+	telnet_child.timeout=None
+
+	telnet_child.sendline('')
+	wait_for_L0_shell(telnet_child)
+	telnet_child.sendline('telnet localhost 4444')
+
+	return telnet_child
+
+def do_some_job(telnet_child, qemu_child):
+	sec = 5
+	print ("Wait for %d seconds" % sec)
+	time.sleep(sec)
+	telnet_child.sendline('ls')
+	wait_for_L2_shell(telnet_child)
+
+	qemu_child.sendline('help')
+	wait_for_qemu_shell(qemu_child)
+
+def shutdown_vm(child):
+	child.sendline('h')
+	wait_for_L1_shell(child)
+	child.sendline('h')
+	wait_for_L0_shell(child)
+
 
 level = get_level()
 iovirt = get_iovirt()
 
 # Start QEMU
 qemu_child = start_qemu(iovirt)
-qemu_child.expect('\(qemu\)')
+wait_for_qemu_shell(qemu_child)
 
-telnet_child = pexpect.spawn('bash')
-telnet_child.logfile = sys.stdout
-telnet_child.timeout=None
+# Start telnet
+telnet_child = start_telnet()
 
+# Make sure we have L1 console
 telnet_child.sendline('')
-telnet_child.expect('kvm-node.*')
-telnet_child.sendline('telnet localhost 4444')
+wait_for_L1_shell(telnet_child)
 
-telnet_child.sendline('')
-telnet_child.expect('L1.*$')
+# Start nested VM in telnet
 boot_nvm(iovirt, telnet_child)
-print ("==========================")
-print ("==========================")
-print ("==========================")
-print ("==========================")
-print ("==========================")
-print ("==========================")
-time.sleep(5)
-telnet_child.sendline('ls')
-telnet_child.expect('L2.*$')
+wait_for_L2_shell(telnet_child)
+# Nested VM boot completed at this point
 
-ree = re.compile('\(qemu\)')
-qemu_child.sendline('help')
-qemu_child.expect('\(qemu\)')
-#qemu_child.expect(ree)
-qemu_child.sendline('abde')
-qemu_child.expect('\(qemu\)')
-#qemu_child.expect(ree)
-qemu_child.sendline('help')
-qemu_child.expect('\(qemu\)')
-#qemu_child.expect(ree)
+# Do some job
+do_some_job(telnet_child, qemu_child)
 
-telnet_child.sendline('h')
-telnet_child.expect('L1.*$')
-telnet_child.sendline('h')
-telnet_child.expect('L1.*$')
-telnet_child.expect('kvm-node.*')
+# Shutdown the virtual machine (L2 and L1)
+shutdown_vm(telnet_child)
+
