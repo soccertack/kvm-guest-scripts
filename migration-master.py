@@ -41,10 +41,6 @@ def boot_vm(iovirt, child):
 		else:
 			child.sendline('cd /srv/vm && ./run-guest-vfio-viommu.sh -s')
 
-	ree = re.compile('\(qemu\)')
-	#child.expect(ree)
-	child.expect('\(qemu\)')
-	mylevel = 1
 	return
 
 def boot_nvm(iovirt, child):
@@ -53,19 +49,27 @@ def boot_nvm(iovirt, child):
 	else:
 		child.sendline('cd ~/vm && ./run-guest.sh')
 
-	child.expect('L2.*$')
+	child.expect('\[L2.*\]')
+
+def start_qemu(iovirt):
+
+	qemu_child = pexpect.spawn('bash')
+	fout = file('mylog.txt','w')
+	qemu_child.logfile = fout
+	qemu_child.timeout=None
+
+	qemu_child.sendline('')
+	qemu_child.expect('kvm-node.*')
+	boot_vm(iovirt, qemu_child)
+
+	return qemu_child
 
 level = get_level()
 iovirt = get_iovirt()
 
-qemu_child = pexpect.spawn('bash')
-fout = file('mylog.txt','w')
-qemu_child.logfile = fout
-qemu_child.timeout=None
-
-qemu_child.sendline('')
-qemu_child.expect('kvm-node.*')
-boot_vm(iovirt, qemu_child)
+# Start QEMU
+qemu_child = start_qemu(iovirt)
+qemu_child.expect('\(qemu\)')
 
 telnet_child = pexpect.spawn('bash')
 telnet_child.logfile = sys.stdout
