@@ -113,32 +113,33 @@ def wait_for_msg(s, msg):
 				break
 
 
-clientsocket = connect_to_server()
-clientsocket.send('Dest ready')
-wait_for_msg(clientsocket, "Dest run")
-
 # TODO get this from the server
 level = get_level()
 iovirt = get_iovirt()
 
-# Start QEMU
-qemu_child = start_qemu(iovirt)
-wait_for_qemu_shell(qemu_child)
+clientsocket = connect_to_server()
+clientsocket.send('Dest ready')
+for i in range(10):
+	wait_for_msg(clientsocket, "Dest run")
 
-clientsocket.send('Dest running')
+	# Start QEMU
+	qemu_child = start_qemu(iovirt)
+	wait_for_qemu_shell(qemu_child)
 
-wait_for_msg(clientsocket, "Migration done")
+	clientsocket.send('Dest running')
 
-# TODO: 
-# Shutdown the virtual machine (L2 and L1)
-# Start telnet
-telnet_child = start_telnet()
-print ("Started console")
+	wait_for_msg(clientsocket, "Migration done")
 
-# Make sure we have L2 console
-telnet_child.sendline('')
-wait_for_L2_shell(telnet_child)
-print ("console working")
+	# Shutdown the virtual machine (L2 and L1)
+	# Start telnet
+	telnet_child = start_telnet()
+	print ("Started console")
 
-shutdown_vm(telnet_child)
+	# Make sure we have L2 console
+	telnet_child.sendline('')
+	wait_for_L2_shell(telnet_child)
+	print ("console working")
 
+	shutdown_vm(telnet_child)
+	print ("VM halted")
+	clientsocket.send('Dest shutdown')
