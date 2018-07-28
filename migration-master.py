@@ -167,7 +167,7 @@ if connection is None:
 wait_for_clients(connection, "Dest ready")
 
 # Delete stat file
-os.remove(STAT_FILE)
+os.system("rm -rf %s" % STAT_FILE)
 
 for i in range(10):
 	# Start the destination QEMU
@@ -189,6 +189,11 @@ for i in range(10):
 	boot_nvm(iovirt, telnet_child)
 	wait_for_L2_shell(telnet_child)
 	# Nested VM boot completed at this point
+
+	telnet_child.sendline('service netperf start')
+	wait_for_L2_shell(telnet_child)
+	# Let's wait for 1 min to run workloads
+	time.sleep (60)
 
 	do_migration(telnet_child, qemu_child)
 	connection.send("Migration done")
