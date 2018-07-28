@@ -23,6 +23,13 @@ def wait_for_L2_shell(child):
 def wait_for_qemu_shell(child):
 	child.expect('\(qemu\)')
 
+def get_workload():
+	yes = raw_input("Want to run workload[y]: ") or "y"
+
+	if yes == "y":
+		return True
+	return False
+
 def get_level():
 	level  = int(raw_input("Enter virtualization level [2]: ") or "2")
 	if level < 1:
@@ -125,7 +132,7 @@ def shutdown_vm(child):
 	child.sendline('h')
 	wait_for_L0_shell(child)
 
-def start_server():
+def start_server(workload):
 	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	print ("Try to bind...")
@@ -136,14 +143,19 @@ def start_server():
 	print ("Done.")
 
 	print ("Try to listen...")
-	serversocket.listen(1) # become a server socket.
+	serversocket.listen(2) # become a server socket.
 	print ("Done.")
 
-	print ("Try to accept...")
+	print ("Try to accept from the destination")
 	connection, address = serversocket.accept()
 	print ("Done.")
 
-	return connection
+	if workload:
+		print ("Try to accept from the client")
+		connection_client, address_client = serversocket.accept()
+		print ("Done.")
+
+	return connection, connection_client
 
 def wait_for_clients(connection, msg):
 
@@ -157,14 +169,17 @@ def wait_for_clients(connection, msg):
 
 level = get_level()
 iovirt = get_iovirt()
+workload = get_workload()
 
 # Start the server
-connection = start_server()
+connection, connection_client = start_server(workload)
 if connection is None:
 	sys.exit(0)
 
 # Wait for other clients ready
 wait_for_clients(connection, "Dest ready")
+if workload:
+	wait_for_clients(connection_client, "Client ready")
 
 # Delete stat file
 os.system("rm -rf %s" % STAT_FILE)
@@ -177,6 +192,7 @@ for i in range(10):
 	# Start QEMU
 	qemu_child = start_qemu(iovirt)
 	wait_for_qemu_shell(qemu_child)
+	#os.system('cd /srv/vm/qemu/scripts/qmp/ && sudo ./pin_vcpus.sh')
 
 	# Start telnet
 	telnet_child = start_telnet()
@@ -188,16 +204,22 @@ for i in range(10):
 	# Start nested VM in telnet
 	boot_nvm(iovirt, telnet_child)
 	wait_for_L2_shell(telnet_child)
+	#os.system('ssh root@10.10.1.100 "cd vm/qemu/scripts/qmp/ && ./pin_vcpus.sh"')
 	# Nested VM boot completed at this point
 
-	telnet_child.sendline('service netperf start')
-	wait_for_L2_shell(telnet_child)
 	# Let's wait for 1 min to run workloads
-	time.sleep (60)
+	if workload:
+		telnet_child.sendline('service netperf start')
+		wait_for_L2_shell(telnet_child)
+		connection_client.send("Client run")
+		time.sleep (60)
 
 	do_migration(telnet_child, qemu_child)
 	connection.send("Migration done")
 	wait_for_clients(connection, "Dest shutdown")
+	if workload:
+		wait_for_clients(connection_client, "Client done")
+		connection_client.send("Client stop")
 
 	qemu_child.sendline('quit')
 
