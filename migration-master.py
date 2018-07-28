@@ -9,6 +9,7 @@ import argparse
 import re
 
 LOCAL_SOCKET = 8890
+STAT_FILE="stat.txt"
 
 def wait_for_L0_shell(child):
 	child.expect('kvm-node.*')
@@ -97,6 +98,9 @@ def do_migration(telnet_child, qemu_child):
 
 		if "Migration status: completed" in qemu_child.before:
 			print ("Migration done")
+			stat = open(STAT_FILE,'a')
+			stat.write (qemu_child.before)
+			stat.close()
 			break
 
 		time.sleep(5)
@@ -143,7 +147,7 @@ def start_server():
 
 def wait_for_clients(connection, msg):
 
-	print ("Waiting for clients.")
+	print ("Waiting for %s" % msg)
 	while True:
 	    buf = connection.recv(64)
 	    if len(buf) > 0:
@@ -162,7 +166,10 @@ if connection is None:
 # Wait for other clients ready
 wait_for_clients(connection, "Dest ready")
 
-for i in (0, 10):
+# Delete stat file
+os.remove(STAT_FILE)
+
+for i in range(10):
 	# Start the destination QEMU
 	connection.send("Dest run")
 	wait_for_clients(connection, "Dest running")
@@ -188,4 +195,6 @@ for i in (0, 10):
 	wait_for_clients(connection, "Dest shutdown")
 
 	qemu_child.sendline('quit')
+
+	print ("%dth iter is done\n" % i)
 
