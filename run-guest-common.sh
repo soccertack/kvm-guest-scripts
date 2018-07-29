@@ -211,7 +211,7 @@ if [ "$WINDOWS" == 1 ]; then
 	MON="-monitor stdio"
 fi
 
-if [ "$XEN" == 1]; then
+if [ "$XEN" == 1 ]; then
 	# If we do viommu + vfio, which changes QEMU, the QEMU has already patch for Xen.
 	# So, this QEMU is only for the viommu only case.
 	QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
@@ -220,4 +220,3 @@ if [ "$XEN" == 1]; then
 	# So, give 1G buffer. Note that L2 dom0 and L2 domU will remain to have exactly 12G.
 	MEMSIZE=`expr $MEMSIZE + 1`
 fi
-	
