@@ -24,11 +24,17 @@ def wait_for_qemu_shell(child):
 	child.expect('\(qemu\)')
 
 def get_workload():
-	yes = raw_input("Want to run workload[y]: ") or "y"
+	w_default = "n"
+	yes = raw_input("Want to run workload[%s]: " % w_default) or w_default
 
 	if yes == "y":
 		return True
 	return False
+
+def get_iter():
+	iter = int(raw_input("Enter num of iteration[1]: ") or "1")
+
+	return iter
 
 def get_level():
 	level  = int(raw_input("Enter virtualization level [2]: ") or "2")
@@ -43,7 +49,8 @@ def get_level():
 
 # iovirt: pv, pt(pass-through), or vp(virtual-passthough)
 def get_iovirt():
-	iovirt = raw_input("Enter I/O virtualization level [pv]: ") or "pv"
+	iovirt_default = "pv"
+	iovirt = raw_input("Enter I/O virtualization level [%s]: " % iovirt_default) or iovirt_default 
 	if iovirt not in ["pv", "pt", "vp"]:
 		print ("Enter pv, pt, or vp")
 		sys.exit(0)
@@ -154,6 +161,8 @@ def start_server(workload):
 		print ("Try to accept from the client")
 		connection_client, address_client = serversocket.accept()
 		print ("Done.")
+	else:
+		connection_client = 0
 
 	return connection, connection_client
 
@@ -170,6 +179,7 @@ def wait_for_clients(connection, msg):
 level = get_level()
 iovirt = get_iovirt()
 workload = get_workload()
+iteration = get_iter()
 
 # Start the server
 connection, connection_client = start_server(workload)
@@ -178,13 +188,20 @@ if connection is None:
 
 # Wait for other clients ready
 wait_for_clients(connection, "Dest ready")
+connection.send(str(level))
+wait_for_clients(connection, "Level received")
+connection.send(iovirt)
+wait_for_clients(connection, "iovirt received")
+connection.send(str(iteration))
+wait_for_clients(connection, "iteration received")
+
 if workload:
 	wait_for_clients(connection_client, "Client ready")
 
 # Delete stat file
 os.system("rm -rf %s" % STAT_FILE)
 
-for i in range(10):
+for i in range(iteration):
 	# Start the destination QEMU
 	connection.send("Dest run")
 	wait_for_clients(connection, "Dest running")
@@ -213,6 +230,10 @@ for i in range(10):
 		wait_for_L2_shell(telnet_child)
 		connection_client.send("Client run")
 		time.sleep (60)
+	else: 
+		telnet_child.sendline('service netperf start')
+		wait_for_L2_shell(telnet_child)
+		time.sleep (80)
 
 	do_migration(telnet_child, qemu_child)
 	connection.send("Migration done")
