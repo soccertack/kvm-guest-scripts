@@ -22,7 +22,5 @@ MACHINE="q35,accel=kvm,kernel-irqchip=split"
 #IOMMU="$IOMMU,intpost=on"
 #QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
 
-#Uncomment below if you want to run Xen as a guest hypervisor
-#QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
 source qemu-command-x86.sh
 

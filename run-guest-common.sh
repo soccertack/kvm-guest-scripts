@@ -60,6 +60,7 @@ usage() {
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
+	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    --win:		       Run windows guest\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
@@ -121,6 +122,10 @@ do
 		;;
 	  --win)
 	  	WINDOWS=1
+		shift 1
+		;;
+	  -x | --xen)
+		XEN=1
 		shift 1
 		;;
 	  -h | --help)
@@ -205,4 +210,13 @@ if [ "$WINDOWS" == 1 ]; then
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
 fi
-	
+
+if [ "$XEN" == 1 ]; then
+	# If we do viommu + vfio, which changes QEMU, the QEMU has already patch for Xen.
+	# So, this QEMU is only for the viommu only case.
+	QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
+
+	# If we alloc 24G for L1, and dedicate 12G for L2 dom0, then we can't alloc 12G for L2 domU.
+	# So, give 1G buffer. Note that L2 dom0 and L2 domU will remain to have exactly 12G.
+	MEMSIZE=`expr $MEMSIZE + 1`
+fi
