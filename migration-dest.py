@@ -104,6 +104,13 @@ def connect_to_server():
 	return clientsocket
 
 
+def wait_for_any_msg(s):
+	while True:
+		buf = s.recv(64)
+		if len(buf) > 0:
+			print buf
+			return buf
+
 def wait_for_msg(s, msg):
 	while True:
 		buf = s.recv(64)
@@ -114,12 +121,24 @@ def wait_for_msg(s, msg):
 
 
 # TODO get this from the server
-level = get_level()
-iovirt = get_iovirt()
+# level = get_level()
+#iovirt = get_iovirt()
 
 clientsocket = connect_to_server()
 clientsocket.send('Dest ready')
-for i in range(10):
+
+level = wait_for_any_msg(clientsocket)
+clientsocket.send('Level received')
+level = int(level)
+
+iovirt = wait_for_any_msg(clientsocket)
+clientsocket.send('iovirt received')
+
+iteration = wait_for_any_msg(clientsocket)
+clientsocket.send('iteration received')
+iteration = int(iteration)
+
+for i in range(iteration):
 	wait_for_msg(clientsocket, "Dest run")
 
 	# Start QEMU
