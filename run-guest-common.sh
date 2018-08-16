@@ -112,6 +112,10 @@ do
 		MQ_NUM="$2"
 		shift 2
 		;;
+	  --pi)
+		PI=1
+		shift 1
+		;;
 	  --dumpdtb)
 		DUMPDTB=",dumpdtb=$2"
 		shift 2

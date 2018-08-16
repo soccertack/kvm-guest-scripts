@@ -18,9 +18,10 @@ IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2 -device virtio-net-pci,netdev=net2,b
 
 MACHINE="q35,accel=kvm,kernel-irqchip=split"
 
-#Uncomment below if you want to provide PI cap in vIOMMU
-#IOMMU="$IOMMU,intpost=on"
-#QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
+if [ "$PI" == 1 ]; then
+	IOMMU="$IOMMU,intpost=on"
+	QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
+fi
 
 source qemu-command-x86.sh
 
