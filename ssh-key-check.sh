@@ -16,3 +16,7 @@ if [ "$PUB_KEY" -ot "$PRI_KEY" ]; then
 	./nested.sh
 	popd
 fi
+
+pushd /tmp/env/nesting
+source ./mount-and-copy-ssh-key.sh
+popd
