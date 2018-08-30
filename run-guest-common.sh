@@ -61,6 +61,7 @@ usage() {
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
+	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
