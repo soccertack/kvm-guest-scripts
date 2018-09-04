@@ -12,8 +12,6 @@ if [ "$PUB_KEY" -ot "$PRI_KEY" ]; then
 	pushd /tmp/env
 	./env.py -f -k
 	
-	# Then update ssh keys in vm images
-	./nested.sh
 	popd
 fi
 

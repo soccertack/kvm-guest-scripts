@@ -225,3 +225,7 @@ if [ "$XEN" == 1 ]; then
 	# So, give 1G buffer. Note that L2 dom0 and L2 domU will remain to have exactly 12G.
 	MEMSIZE=`expr $MEMSIZE + 1`
 fi
+
+# Install host ssh key to VM
+source ssh-key-check.sh
+
