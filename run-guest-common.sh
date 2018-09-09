@@ -193,7 +193,7 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 	FS=/sdc/guest0.img
 
 	# We only need migration patch for L1+L2 VM migration
-	if [ "$IP" == "10.10.1.2" ]; then
+	if [ "$IS_HOST" == 1 ]; then
 		QEMU=./qemu-migration/x86_64-softmmu/qemu-system-x86_64
 	fi
 
@@ -230,6 +230,8 @@ if [ "$XEN" == 1 ]; then
 	MEMSIZE=`expr $MEMSIZE + 1`
 fi
 
-# Install host ssh key to VM
-source ssh-key-check.sh
+if [ "$IS_HOST" == 1 ]; then
+	# Install host ssh key to VM
+	source ssh-key-check.sh
+fi
 
