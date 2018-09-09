@@ -176,6 +176,14 @@ MAC_POSTFIX=`expr $SMP \% 10`
 VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:c"$MAC_POSTFIX
 USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:5"$MAC_POSTFIX
 
+set_remote_fs () {
+	mount | grep sdc 2>&1 > /dev/null
+	if [[ $? != 0 ]]; then
+		mount 10.10.1.1:/sdc /sdc
+	fi
+	FS=/sdc/$1
+}
+
 # Migration related settings
 TELNET_PORT=4444
 if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
@@ -190,7 +198,7 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
-	FS=/sdc/guest0.img
+	set_remote_fs guest0.img
 
 	# We only need migration patch for L1+L2 VM migration
 	if [ "$IS_HOST" == 1 ]; then
@@ -205,7 +213,7 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 fi
 
 if [ "$WINDOWS" == 1 ]; then
-	FS=/sdc/win.img
+	set_remote_fs  win.img
 	WIN_ISO=en_windows_server_2016_updated_feb_2018_x64_dvd_11636692.iso
 	VIRTIO_ISO=virtio-win.iso
 	CPU_HV=",hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time"
