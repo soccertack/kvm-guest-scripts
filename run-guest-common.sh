@@ -191,7 +191,11 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
 	FS=/sdc/guest0.img
-	QEMU=./qemu-migration/x86_64-softmmu/qemu-system-x86_64
+
+	# We only need migration patch for L1+L2 VM migration
+	if [ "$IP" == "10.10.1.2" ]; then
+		QEMU=./qemu-migration/x86_64-softmmu/qemu-system-x86_64
+	fi
 
 	if [ "$WINDOWS" == 1 ]; then
 		echo "We don't support Windows migration yet"
