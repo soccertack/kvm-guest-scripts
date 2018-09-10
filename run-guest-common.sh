@@ -63,6 +63,7 @@ usage() {
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
+	U="$U    --cap:		       Add state capture capability to virtio dev\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
 	U="$U    -h | --help:           Show this output\n"
@@ -131,6 +132,10 @@ do
 		;;
 	  -x | --xen)
 		XEN=1
+		shift 1
+		;;
+	  --cap)
+		VIRTIO_STATE_CAP=1
 		shift 1
 		;;
 	  -h | --help)
