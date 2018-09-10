@@ -196,8 +196,14 @@ find_available_mac() {
 		err=$?
 
 		if [[ $err != 0 ]]; then
-			MAC_POSTFIX=$hex
-			return	
+			#nmap doesn't show this machine's MAC addrs
+			ifconfig | grep -q -i $MAC_PREFIX$hex
+			err=$?
+
+			if [[ $err != 0 ]]; then
+				MAC_POSTFIX=$hex
+				return	
+			fi
 		fi
 	done
 
