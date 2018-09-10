@@ -172,6 +172,12 @@ fi
 MAC_TMP="/tmp/mac"
 echo "Running nmap"
 nmap -n -sP 10.10.1.0/24 > $MAC_TMP
+err=$?
+if [ $err != 0 ]; then
+	echo "nmap returned an error. Did you install nmap?"
+	exit
+fi
+
 echo "nmap Done"
 
 # Run nmap before calling this function
