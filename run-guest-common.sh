@@ -168,13 +168,45 @@ if [ ! -z "$MQ_NUM" ]; then
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,mq=on,vectors=$VECTOR_NUM"
 fi
 
-# Let's make mac addresses unique across all virtualization levels
-# We should be fine for 5 levels of virt :)
-# This trick may break if we assign random number of cpus, though.
-MAC_POSTFIX=`expr $SMP \% 10`
+# Save mac addresses in this subnet
+MAC_TMP="/tmp/mac"
+echo "Running nmap"
+nmap -n -sP 10.10.1.0/24 > $MAC_TMP
+echo "nmap Done"
 
-VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=de:ad:be:ef:f6:c"$MAC_POSTFIX
-USER_NETDEV="$USER_NETDEV,mac=de:ad:be:ef:41:5"$MAC_POSTFIX
+# Run nmap before calling this function
+find_available_mac() {
+	MAC_PREFIX=$1
+
+	for i in {0..15}; do
+		hex=$(printf '%x' $i) 
+		grep -q -i $MAC_PREFIX$hex $MAC_TMP
+		err=$?
+
+		if [[ $err != 0 ]]; then
+			MAC_POSTFIX=$hex
+			return	
+		fi
+	done
+
+	MAC_POSTFIX="X"
+}
+
+MAC_PREFIX="de:ad:be:ef:f6:c"
+find_available_mac $MAC_PREFIX
+if [ $MAC_POSTFIX == "X" ]; then
+	echo "No available MAC addr with "$MAC_PREFIX
+	exit
+fi
+VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=$MAC_PREFIX$MAC_POSTFIX"
+
+MAC_PREFIX="de:ad:be:ef:41:5"
+find_available_mac $MAC_PREFIX
+if [ $MAC_POSTFIX == "X" ]; then
+	echo "No available MAC addr with "$MAC_PREFIX
+	exit
+fi
+USER_NETDEV="$USER_NETDEV,mac=$MAC_PREFIX$MAC_POSTFIX"
 
 set_remote_fs () {
 	mount | grep sdc 2>&1 > /dev/null
