@@ -183,9 +183,15 @@ echo "nmap Done"
 # Run nmap before calling this function
 find_available_mac() {
 	MAC_PREFIX=$1
+	USED=$2
 
 	for i in {0..15}; do
 		hex=$(printf '%x' $i) 
+
+		if [ $hex == "$USED" ]; then
+			continue
+		fi
+
 		grep -q -i $MAC_PREFIX$hex $MAC_TMP
 		err=$?
 
@@ -205,6 +211,7 @@ if [ $MAC_POSTFIX == "X" ]; then
 	exit
 fi
 VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=$MAC_PREFIX$MAC_POSTFIX"
+NETDEV1_POSTFIX=$MAC_POSTFIX
 
 MAC_PREFIX="de:ad:be:ef:41:5"
 find_available_mac $MAC_PREFIX

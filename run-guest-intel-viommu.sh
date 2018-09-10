@@ -16,6 +16,14 @@ IOH2="-device ioh3420,id=pcie.1,chassis=2"
 IOMMU_VIRTIO_NETDEV2="-netdev tap,id=net2,vhostforce"
 IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2 -device virtio-net-pci,netdev=net2,bus=pcie.1,$NETDEV_IOMMU_OPTION"
 
+MAC_PREFIX="de:ad:be:ef:f6:c"
+find_available_mac $MAC_PREFIX $NETDEV1_POSTFIX
+if [ $MAC_POSTFIX == "X" ]; then
+	echo "No available MAC addr with "$MAC_PREFIX
+	exit
+fi
+IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2,mac=$MAC_PREFIX$MAC_POSTFIX"
+
 MACHINE="q35,accel=kvm,kernel-irqchip=split"
 
 if [ "$PI" == 1 ]; then
