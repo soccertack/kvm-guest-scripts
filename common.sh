@@ -10,8 +10,6 @@ else
 	IS_HOST=1
 fi
 
-exit
-
 case $ETH in
  *br*)
     ETH=`brctl show | grep $ETH | awk '{ print $4 }'`
