@@ -53,7 +53,7 @@ usage() {
 	U="$U    -c | --CPU <nr>:       Number of cores (default ${SMP})\n"
 	U="$U    -m | --mem <GB>:       Memory size (default ${MEMSIZE})\n"
 	U="$U    -s | --migration-src:   Run the guest as the migration source\n"
-	U="$U    -t | --migration-dst <PortNum> : run the guest as the migration dest\n"
+	U="$U    -t | --migration-dst: run the guest as the migration dest\n"
 	U="$U    -k | --kernel <Image>: Use kernel image (default ${KERNEL})\n"
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
@@ -87,8 +87,8 @@ do
 		shift 1
 		;;
 	  -t | --migration-dst)
-		M_PORT="$2"
-		shift 2
+		M_PORT=5555
+		shift 1
 		;;
 	  -k | --kernel)
 		KERNEL="$2"
