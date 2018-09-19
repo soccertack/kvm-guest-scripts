@@ -184,6 +184,13 @@ find_available_mac() {
     if [ "$IS_HOST" == 1 ]; then
         x=$IP_TAIL
         y=1
+    else
+        MAC_TMP=`ifconfig | grep -m 1 "de:ad" | awk '{ print $5 }'`
+        # Inherit the machine ID
+        x=`echo ${a:13:1}`
+        # Add one more virt level
+        y=`echo ${a:15:1}`
+        let "y++"
     fi
 
     echo "IS_HOST: "$IS_HOST
