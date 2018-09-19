@@ -187,9 +187,9 @@ find_available_mac() {
     else
         MAC_TMP=`ifconfig | grep -m 1 "de:ad" | awk '{ print $5 }'`
         # Inherit the machine ID
-        x=`echo ${a:13:1}`
+        x=`echo ${MAC_TMP:13:1}`
         # Add one more virt level
-        y=`echo ${a:15:1}`
+        y=`echo ${MAC_TMP:15:1}`
         let "y++"
     fi
 
