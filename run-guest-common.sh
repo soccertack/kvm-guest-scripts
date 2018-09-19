@@ -173,64 +173,30 @@ if [ ! -z "$MQ_NUM" ]; then
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,mq=on,vectors=$VECTOR_NUM"
 fi
 
-# Save mac addresses in this subnet
-MAC_TMP="/tmp/mac"
-echo "Running nmap"
-nmap -n -sP 10.10.1.0/24 > $MAC_TMP
-err=$?
-if [ $err != 0 ]; then
-	echo "nmap returned an error. Did you install nmap?"
-	exit
-fi
-
-echo "nmap Done"
-
-# Run nmap before calling this function
 find_available_mac() {
-	MAC_PREFIX=$1
-	USED=$2
+    # Need to append "x:yz" to the prefix
+    # x: machine ID (i.e. last digit of host private IP)
+    # y: virtualization level
+    # z: device ID in this VM
+    MAC_PREFIX="de:ad:be:ef:f"
+    z=$1
 
-	for i in {0..15}; do
-		hex=$(printf '%x' $i) 
+    if [ "$IS_HOST" == 1 ]; then
+        x=$IP_TAIL
+        y=1
+    fi
 
-		if [ $hex == "$USED" ]; then
-			continue
-		fi
-
-		grep -q -i $MAC_PREFIX$hex $MAC_TMP
-		err=$?
-
-		if [[ $err != 0 ]]; then
-			#nmap doesn't show this machine's MAC addrs
-			ifconfig | grep -q -i $MAC_PREFIX$hex
-			err=$?
-
-			if [[ $err != 0 ]]; then
-				MAC_POSTFIX=$hex
-				return	
-			fi
-		fi
-	done
-
-	MAC_POSTFIX="X"
+    echo "IS_HOST: "$IS_HOST
+    echo "IP_TAIL: "$IP_TAIL
+    echo "MAC: "$MAC_PREFIX$x":"$y$z
+    MAC=$MAC_PREFIX$x":"$y$z
 }
 
-MAC_PREFIX="de:ad:be:ef:f6:c"
-find_available_mac $MAC_PREFIX
-if [ $MAC_POSTFIX == "X" ]; then
-	echo "No available MAC addr with "$MAC_PREFIX
-	exit
-fi
-VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=$MAC_PREFIX$MAC_POSTFIX"
-NETDEV1_POSTFIX=$MAC_POSTFIX
+find_available_mac 1
+VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=$MAC"
 
-MAC_PREFIX="de:ad:be:ef:41:5"
-find_available_mac $MAC_PREFIX
-if [ $MAC_POSTFIX == "X" ]; then
-	echo "No available MAC addr with "$MAC_PREFIX
-	exit
-fi
-USER_NETDEV="$USER_NETDEV,mac=$MAC_PREFIX$MAC_POSTFIX"
+find_available_mac 2
+USER_NETDEV="$USER_NETDEV,mac=$MAC"
 
 set_remote_fs () {
 	mount | grep sdc 2>&1 > /dev/null
