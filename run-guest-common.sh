@@ -229,9 +229,12 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 	MON="-monitor stdio"
 	set_remote_fs guest0.img
 
-	# We only need migration patch for L1+L2 VM migration
 	if [ "$IS_HOST" == 1 ]; then
+		# We need QEMU patches for saving nested state
 		QEMU=./qemu-migration/x86_64-softmmu/qemu-system-x86_64
+	else
+		# We need QEMU patches for saving vfio device migration
+		QEMU=/sdc/qemu-vfio/x86_64-softmmu/qemu-system-x86_64
 	fi
 
 	if [ "$WINDOWS" == 1 ]; then
