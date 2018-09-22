@@ -193,9 +193,6 @@ find_available_mac() {
         let "y++"
     fi
 
-    echo "IS_HOST: "$IS_HOST
-    echo "IP_TAIL: "$IP_TAIL
-    echo "MAC: "$MAC_PREFIX$x":"$y$z
     MAC=$MAC_PREFIX$x":"$y$z
 }
 
