@@ -60,6 +60,7 @@ usage() {
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
+	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
@@ -112,6 +113,10 @@ do
 		;;
 	  -q | --mq)
 		MQ_NUM="$2"
+		shift 2
+		;;
+	  -u | --qemu)
+		QEMU_F="$2"
 		shift 2
 		;;
 	  --pi)

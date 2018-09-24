@@ -12,6 +12,10 @@ if [[ -n $VIOMMU_VIRTIO_NETDEV2 ]]; then
 	./net.sh
 fi
 
+if [[ -n $QEMU_F ]]; then
+	QEMU=./$QEMU_F/x86_64-softmmu/qemu-system-x86_64
+fi
+
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
 echo "MEMSIZE: "${MEMSIZE}G

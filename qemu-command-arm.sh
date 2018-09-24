@@ -12,6 +12,10 @@ if [[ -n $VIRTIO_NETDEV ]]; then
 	./net.sh
 fi
 
+if [[ -n $QEMU_F ]]; then
+    QEMU=./$QEMU_F/aarch64-softmmu/qemu-system-aarch64
+fi
+
 $QEMU \
         -smp $SMP -m ${MEMSIZE}G -machine $MACHINE -cpu host,$NESTED \
         -kernel ${KERNEL} -enable-kvm ${DTB} \
