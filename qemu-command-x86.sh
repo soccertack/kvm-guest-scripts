@@ -16,7 +16,7 @@ if [[ -n $QEMU_F ]]; then
 	QEMU=./$QEMU_F/x86_64-softmmu/qemu-system-x86_64
 fi
 
-if [[ -n $MONITOR_F]]; then
+if [[ -n $MONITOR_F ]]; then
 	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 	MON="-monitor stdio"
 fi
