@@ -62,6 +62,7 @@ usage() {
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
+	U="$U    --modern:		Run a modern virtio net dev\n"
 	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
 	U="$U    --cap:		       Add state capture capability to virtio dev\n"
@@ -119,6 +120,10 @@ do
 		QEMU_F="$2"
 		shift 2
 		;;
+	  --modern)
+		MODERN="disable-modern=off,disable-legacy=on"
+		shift 1
+		;;
 	  --pi)
 		PI=1
 		shift 1
@@ -173,6 +178,9 @@ else
 fi
 
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
+if [ ! -z "$MODERN" ]; then
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,$MODERN"
+fi
 if [ ! -z "$MQ_NUM" ]; then
 	VECTOR_NUM=`expr 2 \* "$MQ_NUM" + 2`
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,mq=on,vectors=$VECTOR_NUM"
