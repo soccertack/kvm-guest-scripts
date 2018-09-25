@@ -63,6 +63,7 @@ usage() {
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    --modern:		Run a modern virtio net dev\n"
+	U="$U    --monitor:		Run a qemu monitor\n"
 	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
 	U="$U    --cap:		       Add state capture capability to virtio dev\n"
@@ -122,6 +123,10 @@ do
 		;;
 	  --modern)
 		MODERN="disable-modern=off,disable-legacy=on"
+		shift 1
+		;;
+	  --monitor)
+		MONITOR_F=1
 		shift 1
 		;;
 	  --pi)
@@ -235,8 +240,7 @@ if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
 		USER_NETDEV=`echo $USER_NETDEV | sed  "s/ef:41/ef:42/"`
 	fi
 
-	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
-	MON="-monitor stdio"
+	MONITOR_F=1
 	set_remote_fs guest0.img
 
 	if [ "$IS_HOST" == 1 ]; then
@@ -266,8 +270,7 @@ if [ "$WINDOWS" == 1 ]; then
 	#WINDOWS_OPTIONS="$WINDOWS_OPTIONS --cdrom ${WIN_ISO}"
 	#WINDOWS_OPTIONS="$WINDOWS_OPTIONS --drive file=${VIRTIO_ISO},index=3,media=cdrom"
 	WINDOWS_OPTIONS="$WINDOWS_OPTIONS --cdrom ${VIRTIO_ISO}"
-	CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
-	MON="-monitor stdio"
+	MONITOR_F=1
 fi
 
 if [ "$XEN" == 1 ]; then
