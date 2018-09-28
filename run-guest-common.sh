@@ -54,6 +54,7 @@ usage() {
 	U="$U    -m | --mem <GB>:       Memory size (default ${MEMSIZE})\n"
 	U="$U    -s | --migration-src:   Run the guest as the migration source\n"
 	U="$U    -t | --migration-dst: run the guest as the migration dest\n"
+	U="$U    -l | --migration-dst-file: run the guest restoring from a file\n"
 	U="$U    -k | --kernel <Image>: Use kernel image (default ${KERNEL})\n"
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
@@ -87,11 +88,18 @@ do
 		;;
 	  -s | --migration-src)
 		M_SRC=1
+		MIGRAION_SET=1
 		shift 1
 		;;
 	  -t | --migration-dst)
 		M_PORT=5555
+		MIGRAION_SET=1
 		shift 1
+		;;
+	  -l | --migration-dst-file)
+		M_FILE="$2"
+		MIGRAION_SET=1
+		shift 2
 		;;
 	  -k | --kernel)
 		KERNEL="$2"
@@ -230,14 +238,15 @@ set_remote_fs () {
 
 # Migration related settings
 TELNET_PORT=4444
-if [ -n "$M_SRC" ] || [ -n "$M_PORT" ]; then
+if [ -n "$MIGRAION_SET" ]; then
 	if [ -n "$M_PORT" ]; then
 		TELNET_PORT=4445
-		MIGRAION="-incoming tcp:0:$M_PORT"
+		MIGRAION=(-incoming tcp:0:$M_PORT)
 
 		# Tweak params which conflict with the source
 		USER_NETDEV=`echo $USER_NETDEV | sed  "s/2222/2223/"`
-		USER_NETDEV=`echo $USER_NETDEV | sed  "s/ef:41/ef:42/"`
+	elif [ -n "$M_FILE" ]; then
+		MIGRAION=(-incoming "exec: gzip -c -d $M_FILE")
 	fi
 
 	MONITOR_F=1

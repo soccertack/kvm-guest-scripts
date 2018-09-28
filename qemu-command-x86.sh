@@ -48,7 +48,7 @@ sudo $QEMU	\
 	$IOMMU_VIRTIO_NETDEV2	\
 	$VFIO_DEV	\
 	$MON		\
-	$MIGRAION	\
+	"${MIGRAION[@]}"	\
 	$WINDOWS_OPTIONS	\
 #	-trace enable=vfio_region_setup,file=abc \
 
