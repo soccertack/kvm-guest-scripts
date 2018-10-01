@@ -13,7 +13,7 @@ if [[ -n $VIOMMU_VIRTIO_NETDEV2 ]]; then
 fi
 
 if [[ -n $QEMU_F ]]; then
-	QEMU=./$QEMU_F/x86_64-softmmu/qemu-system-x86_64
+	QEMU=$QEMU_F/x86_64-softmmu/qemu-system-x86_64
 fi
 
 if [[ -n $MONITOR_F ]]; then
