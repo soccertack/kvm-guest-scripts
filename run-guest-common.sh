@@ -231,7 +231,9 @@ USER_NETDEV="$USER_NETDEV,mac=$MAC"
 set_remote_fs () {
 	mount | grep sdc 2>&1 > /dev/null
 	if [[ $? != 0 ]]; then
+		echo "Trying to mount nfs directory from 10.10.1.1"
 		mount 10.10.1.1:/sdc /sdc
+		echo "Mount done"
 	fi
 	FS=/sdc/$1
 }
@@ -268,7 +270,7 @@ if [ -n "$MIGRAION_SET" ]; then
 fi
 
 if [ "$WINDOWS" == 1 ]; then
-	set_remote_fs  win.img
+	set_remote_fs  win-big.img
 	WIN_ISO=en_windows_server_2016_updated_feb_2018_x64_dvd_11636692.iso
 	VIRTIO_ISO=virtio-win.iso
 	CPU_HV=",hv_relaxed,hv_spinlocks=0x1fff,hv_vapic,hv_time"
