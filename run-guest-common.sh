@@ -254,14 +254,6 @@ if [ -n "$MIGRAION_SET" ]; then
 	MONITOR_F=1
 	set_remote_fs guest0.img
 
-	if [ "$IS_HOST" == 1 ]; then
-		# We need QEMU patches for saving nested state
-		QEMU=./qemu-migration/x86_64-softmmu/qemu-system-x86_64
-	else
-		# We need QEMU patches for saving vfio device migration
-		QEMU=/sdc/qemu-vfio/x86_64-softmmu/qemu-system-x86_64
-	fi
-
 	if [ "$WINDOWS" == 1 ]; then
 		echo "We don't support Windows migration yet"
 		# TODO: just set FS correctly.
