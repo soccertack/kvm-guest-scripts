@@ -11,6 +11,7 @@ DUMPDTB=""
 DTB=""
 NESTED=""
 SMMU="v8"
+MODERN="disable-modern=off,disable-legacy=on"
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -64,6 +65,7 @@ usage() {
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    --modern:		Run a modern virtio net dev\n"
+	U="$U    --legacy:		Run a legacy virtio net dev\n"
 	U="$U    --monitor:		Run a qemu monitor\n"
 	U="$U    --pi:		       Enable posted interrupt cap in vIOMMU\n"
 	U="$U    --win:		       Run windows guest\n"
@@ -130,7 +132,10 @@ do
 		shift 2
 		;;
 	  --modern)
-		MODERN="disable-modern=off,disable-legacy=on"
+		shift 1
+		;;
+	  --legacy)
+		MODERN=""
 		shift 1
 		;;
 	  --monitor)
@@ -191,9 +196,8 @@ else
 fi
 
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
-if [ ! -z "$MODERN" ]; then
-	VIRTIO_NETDEV="$VIRTIO_NETDEV,$MODERN"
-fi
+VIRTIO_NETDEV="$VIRTIO_NETDEV,$MODERN"
+
 if [ ! -z "$MQ_NUM" ]; then
 	VECTOR_NUM=`expr 2 \* "$MQ_NUM" + 2`
 	VIRTIO_NETDEV="$VIRTIO_NETDEV,mq=on,vectors=$VECTOR_NUM"
