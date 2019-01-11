@@ -33,10 +33,9 @@ fi
 # TODO: test this on ARM and remove this comment!
 # This physical network device is for Wisc machines.
 BDF_P=`lspci | grep Virtual.Function | head -1 | awk '{ print $1 }'`
-#TODO: Basically we can't get the vdev to assign by looking at the device #
-#      since L1 could have another modern device.
-#      As a work-around, we could pick the last one...
-BDF_V=`lspci | grep Red.Hat.*1041 | awk '{ print $1 }'`
+# As we have multiple virtio modern devices, which have the device id 1041,
+# let's get the last one, which is *probably* the one to pass to the nested VM.
+BDF_V=`lspci | grep Red.Hat.*1041 | tail -n 1 | awk '{ print $1 }'`
 #e1000 doesn't work
 #BDF_E=`lspci | grep 82540EM  | awk '{ print $1 }'`
 BDF_E=`lspci | grep Realtek.*8139 | awk '{ print $1 }'`
