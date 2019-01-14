@@ -233,13 +233,13 @@ find_available_mac 2
 USER_NETDEV="$USER_NETDEV,mac=$MAC"
 
 set_remote_fs () {
-	mount | grep sdc 2>&1 > /dev/null
+	mount | grep mapper.*vm 2>&1 > /dev/null
 	if [[ $? != 0 ]]; then
 		echo "Trying to mount nfs directory from 10.10.1.1"
-		mount 10.10.1.1:/sdc /sdc
+		mount 10.10.1.1:/vm /vm_nfs
 		echo "Mount done"
 	fi
-	FS=/sdc/$1
+	FS=/vm_nfs/$1
 }
 
 # Migration related settings

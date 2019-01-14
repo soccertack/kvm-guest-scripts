@@ -24,6 +24,7 @@ fi
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
 echo "MEMSIZE: "${MEMSIZE}G
+echo "FS: "$FS
 echo "MACHINE: "$MACHINE
 echo "IOMMU: "$IOMMU
 echo "VIRTIO-net: "$VIRTIO_NETDEV
