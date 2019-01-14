@@ -236,6 +236,7 @@ set_remote_fs () {
 	mount | grep mapper.*vm 2>&1 > /dev/null
 	if [[ $? != 0 ]]; then
 		echo "Trying to mount nfs directory from 10.10.1.1"
+		mkdir -p /vm_nfs
 		mount 10.10.1.1:/vm /vm_nfs
 		echo "Mount done"
 	fi
