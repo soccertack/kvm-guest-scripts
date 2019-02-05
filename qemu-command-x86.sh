@@ -51,5 +51,6 @@ sudo $QEMU	\
 	$MON		\
 	"${MIGRAION[@]}"	\
 	$WINDOWS_OPTIONS	\
+	$OV			\
 #	-trace enable=vfio_region_setup,file=abc \
 

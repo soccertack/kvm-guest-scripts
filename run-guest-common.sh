@@ -12,6 +12,7 @@ DTB=""
 NESTED=""
 SMMU="v8"
 MODERN="disable-modern=off,disable-legacy=on"
+OV=""
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -64,6 +65,7 @@ usage() {
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
+	U="$U    -o | --over-commit:	Make the guest control power mode\n"
 	U="$U    --modern:		Run a modern virtio net dev\n"
 	U="$U    --legacy:		Run a legacy virtio net dev\n"
 	U="$U    --monitor:		Run a qemu monitor\n"
@@ -160,6 +162,10 @@ do
 		;;
 	  -x | --xen)
 		XEN=1
+		shift 1
+		;;
+	  -o | --over-commit)
+		OV="-overcommit cpu-pm=on"
 		shift 1
 		;;
 	  --cap)
