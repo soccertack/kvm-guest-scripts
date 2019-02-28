@@ -52,5 +52,5 @@ sudo $QEMU	\
 	"${MIGRAION[@]}"	\
 	$WINDOWS_OPTIONS	\
 	$OV			\
+	$DBG_BIOS		\
 #	-trace enable=vfio_region_setup,file=abc \
-

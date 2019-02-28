@@ -13,6 +13,7 @@ NESTED=""
 SMMU="v8"
 MODERN="disable-modern=off,disable-legacy=on"
 OV=""
+TELNET_PORT=4444
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -74,6 +75,7 @@ usage() {
 	U="$U    --cap:		       Add state capture capability to virtio dev\n"
 	U="$U    --dumpdtb <file>       Dump the generated DTB to <file>\n"
 	U="$U    --dtb <file>           Use the supplied DTB instead of the auto-generated one\n"
+	U="$U    --debug-bios <file>:	Debug custom BIOS\n"
 	U="$U    -h | --help:           Show this output\n"
 	U="${U}\n"
 	echo -e "$U" >&2
@@ -172,6 +174,17 @@ do
 		VIRTIO_STATE_CAP=1
 		shift 1
 		;;
+	  --debug-bios)
+		  # clone https://github.com/coreboot/seabios.git, and build it
+		  # Run the script.
+		  # ./run-guest.sh --debug-bios seabios/out/bios.bin
+		  CUSTOM_BIOS="-bios $2"
+		  DBG_BIOS_OPTION="-chardev stdio,id=seabios -device isa-debugcon,iobase=0x402,chardev=seabios"
+		  DBG_BIOS="$CUSTOM_BIOS $DBG_BIOS_OPTION"
+		  MON="-monitor none"
+		  CONSOLE="telnet:127.0.0.1:$TELNET_PORT,server,nowait"
+		shift 2
+		;;
 	  -h | --help)
 		usage ""
 		exit 1
@@ -250,7 +263,6 @@ set_remote_fs () {
 }
 
 # Migration related settings
-TELNET_PORT=4444
 if [ -n "$MIGRAION_SET" ]; then
 	if [ -n "$M_PORT" ]; then
 		TELNET_PORT=4445
