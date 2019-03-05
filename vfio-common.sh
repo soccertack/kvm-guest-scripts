@@ -44,8 +44,8 @@ if [[ "$BDF_E" != "" ]]; then
 	echo "Virtual-passthrough with the emulated device"
 	BDF=$BDF_E
 elif [[ "$BDF_P" != "" && "$BDF_V" != "" ]]; then
-	echo "We have VF and virtio-net. Not sure what we want to do"
-	exit
+	echo "We have VF and virtio-net. Do the physical passthrough"
+	BDF=$BDF_P
 elif [[ "$BDF_P" == "" && "$BDF_V" == "" ]]; then
 	echo "We have no device to assign to a VM."
 	exit
