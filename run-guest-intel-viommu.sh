@@ -5,10 +5,6 @@ source run-guest-common.sh
 source setup-iommu.sh vp
 source setup-virtio-vp.sh
 
-if [ "$PI" == 1 ]; then
-	QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
-fi
-
 if [ "$VIRTIO_STATE_CAP" == 1 ]; then
 	QEMU="./qemu-migration/x86_64-softmmu/qemu-system-x86_64"
 fi
