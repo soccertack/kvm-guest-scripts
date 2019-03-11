@@ -2,7 +2,7 @@
 
 source run-guest-common.sh
 
-IOMMU="-device intel-iommu,intremap=on,device-iotlb=on"
+source setup-iommu.sh vp
 
 NETDEV_IOMMU_OPTION="iommu_platform=on,disable-modern=off,disable-legacy=on,ats=on"
 
@@ -19,10 +19,7 @@ IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2 -device virtio-net-pci,netdev=net2,b
 find_available_mac 3
 IOMMU_VIRTIO_NETDEV2="$IOMMU_VIRTIO_NETDEV2,mac=$MAC"
 
-MACHINE="q35,accel=kvm,kernel-irqchip=split"
-
 if [ "$PI" == 1 ]; then
-	IOMMU="$IOMMU,intpost=on"
 	QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
 fi
 
