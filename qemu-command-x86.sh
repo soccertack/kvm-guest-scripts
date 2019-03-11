@@ -21,6 +21,10 @@ if [[ -n $MONITOR_F ]]; then
 	MON="-monitor stdio"
 fi
 
+# If you want to create a new VM, comment this out
+#CDROM="--cdrom /vm/ubuntu-16.04.6-server-amd64.iso"
+#VNC="-vnc 127.0.0.1:2"
+
 echo "---------- QEMU setup -------------"
 echo "SMP: "$SMP
 echo "MEMSIZE: "${MEMSIZE}G
@@ -53,4 +57,6 @@ sudo $QEMU	\
 	$WINDOWS_OPTIONS	\
 	$OV			\
 	$DBG_BIOS		\
+	$CDROM			\
+	$VNC
 #	-trace enable=vfio_region_setup,file=abc \
