@@ -43,7 +43,7 @@ sudo $QEMU	\
 	-drive if=none,file=$FS,id=vda,cache=none,format=raw	\
 	-device virtio-blk-pci,drive=vda	\
 	--nographic	\
-	-qmp unix:/var/run/qmp,server,nowait \
+	-qmp unix:/var/run/qmp,server,$WAIT\
 	-serial $CONSOLE	\
 	$USER_NETDEV	\
 	$VIRTIO_NETDEV	\

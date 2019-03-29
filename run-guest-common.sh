@@ -14,6 +14,7 @@ SMMU="v8"
 MODERN="disable-modern=off,disable-legacy=on"
 OV=""
 TELNET_PORT=4444
+WAIT="nowait"
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -67,6 +68,7 @@ usage() {
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
 	U="$U    -x | --xen:		Run Xen as a guest hypervisor\n"
 	U="$U    -o | --over-commit:	Make the guest control power mode\n"
+	U="$U    -w | --wait:		Wait until vcpus are pinned\n"
 	U="$U    --modern:		Run a modern virtio net dev\n"
 	U="$U    --legacy:		Run a legacy virtio net dev\n"
 	U="$U    --monitor:		Run a qemu monitor\n"
@@ -168,6 +170,10 @@ do
 		;;
 	  -o | --over-commit)
 		OV="-overcommit cpu-pm=on"
+		shift 1
+		;;
+	  -w | --wait)
+		WAIT="wait"
 		shift 1
 		;;
 	  --cap)
