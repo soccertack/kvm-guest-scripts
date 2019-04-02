@@ -1,0 +1,3 @@
+[submodule "qemu-pi"]
+	path = qemu-pi
+	url = https://github.com/columbia/qemu-nested.git
