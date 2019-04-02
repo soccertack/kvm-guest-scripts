@@ -2,7 +2,3 @@
 	path = qemu-pi
 	url = https://github.com/columbia/qemu-nested.git
 	branch = v3.1.0-pi
-[submodule "qemu-pi2"]
-	path = qemu-pi2
-	url = https://github.com/columbia/qemu-nested.git
-	branch = v3.1.0-pi
