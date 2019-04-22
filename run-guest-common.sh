@@ -308,7 +308,7 @@ fi
 if [ "$XEN" == 1 ]; then
 	# If we do viommu + vfio, which changes QEMU, the QEMU has already patch for Xen.
 	# So, this QEMU is only for the viommu only case.
-	QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
+#	QEMU="./qemu-xen-fix/x86_64-softmmu/qemu-system-x86_64"
 
 	# If we alloc 24G for L1, and dedicate 12G for L2 dom0, then we can't alloc 12G for L2 domU.
 	# So, give 1G buffer. Note that L2 dom0 and L2 domU will remain to have exactly 12G.
