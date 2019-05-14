@@ -221,7 +221,9 @@ else
 fi
 
 VIRTIO_NETDEV="$VIRTIO_NETDEV -device virtio-net-pci,netdev=net1"
-VIRTIO_NETDEV="$VIRTIO_NETDEV,$MODERN"
+if [ ! $MODERN == "" ]; then
+	VIRTIO_NETDEV="$VIRTIO_NETDEV,$MODERN"
+fi
 
 if [ ! -z "$MQ_NUM" ]; then
 	VECTOR_NUM=`expr 2 \* "$MQ_NUM" + 2`
