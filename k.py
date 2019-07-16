@@ -52,7 +52,7 @@ pv = True
 
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else
+else:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
 
 child.expect(pin_waiting)
@@ -61,15 +61,15 @@ child.expect('L1.*$')
 
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else
+else:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
 child.expect(pin_waiting)
 pin_vcpus(1)
 child.expect('L2.*$')
 
 if pv:
-    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN + " -m 1 -c 2")
+else:
     child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN + PI)
 child.expect(pin_waiting)
 pin_vcpus(2)
