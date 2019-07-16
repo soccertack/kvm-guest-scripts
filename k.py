@@ -48,20 +48,31 @@ PI = ' --pi'
 OV = ' -o' #overcommit
 PIN = ' -w'
 
-child.sendline(cmd_cd + ' && ' + cmd_viommu + PIN + PI)
-child.expect(pin_waiting)
+pv = True
 
+if pv:
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
+else
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
+
+child.expect(pin_waiting)
 pin_vcpus(0)
 child.expect('L1.*$')
 
-child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN + PI)
+if pv:
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
+else
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
 child.expect(pin_waiting)
-
 pin_vcpus(1)
 child.expect('L2.*$')
 
-child.sendline('cd unit')
-child.expect('L2.*$')
+if pv:
+    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
+else
+    child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN + PI)
+child.expect(pin_waiting)
+pin_vcpus(2)
 
 child.interact()
 sys.exit(0)
