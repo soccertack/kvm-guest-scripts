@@ -51,13 +51,14 @@ wait_for_prompt(child, hostname)
 PI = ' --pi'
 OV = ' -o' #overcommit
 PIN = ' -w'
+QEMU = ' --qemu qemu-pi'
 
 pv = False
 
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
 else:
-    child.sendline(cmd_cd + ' && ' + cmd_viommu + PIN)
+    child.sendline(cmd_cd + ' && ' + cmd_viommu + PIN + QEMU)
 
 child.expect(pin_waiting)
 pin_vcpus(0)
@@ -72,7 +73,7 @@ child.expect('L1.*$')
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
 else:
-    child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN)
+    child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN + QEMU)
 child.expect(pin_waiting)
 pin_vcpus(1)
 child.expect('L2.*$')
