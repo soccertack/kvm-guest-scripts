@@ -29,11 +29,24 @@ cmd_viommu = './run-guest-viommu.sh'
 cmd_vfio_viommu = './run-guest-vfio-viommu.sh'
 
 def configure_dvh(dvh, enable):
-    cmd = 'echo %s > /sys/kernel/debug/dvh/%s' % (enable, dvh))
+    cmd = 'echo %s > /sys/kernel/debug/dvh/%s' % (enable, dvh)
     child.sendline(cmd)
 
 pin_waiting='waiting for connection.*server'
 
+###### DVH config
+L0_vidle='N'
+L0_vipi='N'
+L0_vtimer='N'
+
+L1_vidle='N'
+L1_vipi='N'
+L1_vtimer='N'
+
+L2_vidle='N'
+L2_vipi='N'
+L2_vtimer='N'
+#####
 hostname = os.popen('hostname | cut -d . -f1').read().strip()
 
 child = pexpect.spawn('bash')
@@ -45,8 +58,12 @@ child.timeout=None
 child.sendline('')
 wait_for_prompt(child, hostname)
 
-#configure_dvh('virtual_idle', 'Y')
-#wait_for_prompt(child, hostname)
+configure_dvh('virtual_idle', L0_vidle)
+wait_for_prompt(child, hostname)
+configure_dvh('virtual_ipi', L0_vipi)
+wait_for_prompt(child, hostname)
+configure_dvh('virtual_timer', L0_vtimer)
+wait_for_prompt(child, hostname)
 
 PI = ' --pi'
 OV = ' -o' #overcommit
@@ -64,7 +81,11 @@ child.expect(pin_waiting)
 pin_vcpus(0)
 child.expect('L1.*$')
 
-configure_dvh('virtual_idle', 'Y')
+configure_dvh('virtual_idle', L1_vidle)
+child.expect('L1.*$')
+configure_dvh('virtual_ipi', L1_vipi)
+child.expect('L1.*$')
+configure_dvh('virtual_timer', L1_vtimer)
 child.expect('L1.*$')
 
 #child.sendline('echo 0 >/sys/kernel/debug/kvm/timer_opt')
@@ -78,7 +99,11 @@ child.expect(pin_waiting)
 pin_vcpus(1)
 child.expect('L2.*$')
 
-configure_dvh('virtual_idle', 'Y')
+configure_dvh('virtual_idle', L2_vidle)
+child.expect('L2.*$')
+configure_dvh('virtual_ipi', L2_vipi)
+child.expect('L2.*$')
+configure_dvh('virtual_timer', L2_vtimer)
 child.expect('L2.*$')
 
 if pv:
