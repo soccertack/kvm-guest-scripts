@@ -36,15 +36,15 @@ pin_waiting='waiting for connection.*server'
 
 ###### DVH config
 L0_vidle='N'
-L0_vipi='N'
-L0_vtimer='N'
-
 L1_vidle='N'
-L1_vipi='N'
-L1_vtimer='N'
-
 L2_vidle='N'
+
+L0_vipi='N'
+L1_vipi='N'
 L2_vipi='N'
+
+L0_vtimer='N'
+L1_vtimer='N'
 L2_vtimer='N'
 #####
 hostname = os.popen('hostname | cut -d . -f1').read().strip()
@@ -87,9 +87,6 @@ configure_dvh('virtual_ipi', L1_vipi)
 child.expect('L1.*$')
 configure_dvh('virtual_timer', L1_vtimer)
 child.expect('L1.*$')
-
-#child.sendline('echo 0 >/sys/kernel/debug/kvm/timer_opt')
-#child.expect('L1.*$')
 
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
