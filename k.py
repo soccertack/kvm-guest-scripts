@@ -36,16 +36,11 @@ pin_waiting='waiting for connection.*server'
 
 ###### DVH config
 L0_vidle='N'
-L1_vidle='N'
-L2_vidle='N'
+dvh_idle='Y'
 
-L0_vipi='N'
-L1_vipi='N'
-L2_vipi='N'
+dvh_ipi='N'
 
-L0_vtimer='N'
-L1_vtimer='N'
-L2_vtimer='N'
+dvh_timer='Y'
 #####
 hostname = os.popen('hostname | cut -d . -f1').read().strip()
 
@@ -60,9 +55,9 @@ wait_for_prompt(child, hostname)
 
 configure_dvh('virtual_idle', L0_vidle)
 wait_for_prompt(child, hostname)
-configure_dvh('virtual_ipi', L0_vipi)
+configure_dvh('virtual_ipi', dvh_ipi)
 wait_for_prompt(child, hostname)
-configure_dvh('virtual_timer', L0_vtimer)
+configure_dvh('virtual_timer', dvh_timer)
 wait_for_prompt(child, hostname)
 
 PI = ' --pi'
@@ -81,11 +76,11 @@ child.expect(pin_waiting)
 pin_vcpus(0)
 child.expect('L1.*$')
 
-configure_dvh('virtual_idle', L1_vidle)
+configure_dvh('virtual_idle', dvh_idle)
 child.expect('L1.*$')
-configure_dvh('virtual_ipi', L1_vipi)
+configure_dvh('virtual_ipi', dvh_ipi)
 child.expect('L1.*$')
-configure_dvh('virtual_timer', L1_vtimer)
+configure_dvh('virtual_timer', dvh_timer)
 child.expect('L1.*$')
 
 if pv:
@@ -96,11 +91,11 @@ child.expect(pin_waiting)
 pin_vcpus(1)
 child.expect('L2.*$')
 
-configure_dvh('virtual_idle', L2_vidle)
+configure_dvh('virtual_idle', dvh_idle)
 child.expect('L2.*$')
-configure_dvh('virtual_ipi', L2_vipi)
+configure_dvh('virtual_ipi', dvh_ipi)
 child.expect('L2.*$')
-configure_dvh('virtual_timer', L2_vtimer)
+configure_dvh('virtual_timer', dvh_timer)
 child.expect('L2.*$')
 
 if pv:
