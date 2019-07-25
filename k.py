@@ -8,6 +8,17 @@ import time
 import socket
 import argparse
 
+###### DVH config
+L0_vidle='N'
+dvh_idle='N'
+
+dvh_ipi='Y'
+
+dvh_timer='Y'
+
+pv = False
+#####
+
 l1_addr='10.10.1.100'
 
 def wait_for_prompt(child, hostname):
@@ -34,14 +45,6 @@ def configure_dvh(dvh, enable):
 
 pin_waiting='waiting for connection.*server'
 
-###### DVH config
-L0_vidle='N'
-dvh_idle='Y'
-
-dvh_ipi='N'
-
-dvh_timer='Y'
-#####
 hostname = os.popen('hostname | cut -d . -f1').read().strip()
 
 child = pexpect.spawn('bash')
@@ -65,7 +68,6 @@ OV = ' -o' #overcommit
 PIN = ' -w'
 QEMU = ' --qemu qemu-pi'
 
-pv = False
 
 if pv:
     child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
