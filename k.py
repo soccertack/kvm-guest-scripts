@@ -8,18 +8,43 @@ import time
 import socket
 import argparse
 
+cmd_cd = 'cd /srv/vm'
+cmd_pv = './run-guest.sh'
+cmd_vfio = './run-guest-vfio.sh'
+cmd_viommu = './run-guest-viommu.sh'
+cmd_vfio_viommu = './run-guest-vfio-viommu.sh'
+
+# L<x>
+target_level = 2
+
 ###### DVH config
-L0_vidle='N'
-dvh_idle='N'
-
-dvh_ipi='Y'
-
-dvh_timer='Y'
-
 pv = False
+dvh_idle = ['Y'] * target_level
+dvh_idle[0] = 'N'
+dvh_ipi = ['Y'] * target_level
+dvh_timer = ['Y'] * target_level
+
+PI = ' --pi'
+OV = ' -o' #overcommit
+PIN = ' -w'
+QEMU = ' --qemu qemu-pi'
+dvh_vp = []
+for l in range(target_level):
+    if l == 0:
+        dvh_vp.append(cmd_viommu + QEMU)
+    elif l == target_level - 1:
+        dvh_vp.append(cmd_vfio)
+    else:
+        dvh_vp.append(cmd_vfio_viommu + QEMU)
+
 #####
 
 l1_addr='10.10.1.100'
+
+hostname = os.popen('hostname | cut -d . -f1').read().strip()
+hostnames = []
+hostnames.append(hostname)
+hostnames += ["L1", "L2", "L3"]
 
 def wait_for_prompt(child, hostname):
     child.expect('%s.*#' % hostname)
@@ -33,11 +58,6 @@ def pin_vcpus(level):
 		os.system('ssh root@10.10.1.101 "cd vm/qemu/scripts/qmp/ && ./pin_vcpus.sh"')
 	print ("vcpu is pinned")
 
-cmd_cd = 'cd /srv/vm'
-cmd_pv = './run-guest.sh'
-cmd_vfio = './run-guest-vfio.sh'
-cmd_viommu = './run-guest-viommu.sh'
-cmd_vfio_viommu = './run-guest-vfio-viommu.sh'
 
 def configure_dvh(dvh, enable):
     cmd = 'echo %s > /sys/kernel/debug/dvh/%s' % (enable, dvh)
@@ -45,7 +65,6 @@ def configure_dvh(dvh, enable):
 
 pin_waiting='waiting for connection.*server'
 
-hostname = os.popen('hostname | cut -d . -f1').read().strip()
 
 child = pexpect.spawn('bash')
 #https://stackoverflow.com/questions/29245269/pexpect-echoes-sendline-output-twice-causing-unwanted-characters-in-buffer
@@ -56,56 +75,25 @@ child.timeout=None
 child.sendline('')
 wait_for_prompt(child, hostname)
 
-configure_dvh('virtual_idle', L0_vidle)
-wait_for_prompt(child, hostname)
-configure_dvh('virtual_ipi', dvh_ipi)
-wait_for_prompt(child, hostname)
-configure_dvh('virtual_timer', dvh_timer)
-wait_for_prompt(child, hostname)
+for l in range(target_level):
 
-PI = ' --pi'
-OV = ' -o' #overcommit
-PIN = ' -w'
-QEMU = ' --qemu qemu-pi'
+    configure_dvh('virtual_idle', dvh_idle[l])
+    wait_for_prompt(child, hostnames[l])
+    configure_dvh('virtual_ipi', dvh_ipi[l])
+    wait_for_prompt(child, hostnames[l])
+    configure_dvh('virtual_timer', dvh_timer[l])
+    wait_for_prompt(child, hostnames[l])
 
+    if pv:
+        child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
+    else:
+        child.sendline(cmd_cd + ' && ' + dvh_vp[l] + PIN)
 
-if pv:
-    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else:
-    child.sendline(cmd_cd + ' && ' + cmd_viommu + PIN + QEMU)
+    child.expect(pin_waiting)
+    pin_vcpus(l)
+    wait_for_prompt(child, hostnames[l+1])
 
-child.expect(pin_waiting)
-pin_vcpus(0)
-child.expect('L1.*$')
-
-configure_dvh('virtual_idle', dvh_idle)
-child.expect('L1.*$')
-configure_dvh('virtual_ipi', dvh_ipi)
-child.expect('L1.*$')
-configure_dvh('virtual_timer', dvh_timer)
-child.expect('L1.*$')
-
-if pv:
-    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else:
-    child.sendline(cmd_cd + ' && ' + cmd_vfio_viommu + PIN + QEMU)
-child.expect(pin_waiting)
-pin_vcpus(1)
-child.expect('L2.*$')
-
-configure_dvh('virtual_idle', dvh_idle)
-child.expect('L2.*$')
-configure_dvh('virtual_ipi', dvh_ipi)
-child.expect('L2.*$')
-configure_dvh('virtual_timer', dvh_timer)
-child.expect('L2.*$')
-
-if pv:
-    child.sendline(cmd_cd + ' && ' + cmd_pv + PIN)
-else:
-    child.sendline(cmd_cd + ' && ' + cmd_vfio + PIN)
-child.expect(pin_waiting)
-pin_vcpus(2)
 
 child.interact()
+
 sys.exit(0)
