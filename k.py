@@ -19,6 +19,7 @@ dvh_ipi = ['Y'] * target_level
 dvh_timer = ['Y'] * target_level
 
 dry_run = False
+old_options = True
 #####################################
 
 PI = ' --pi'
@@ -86,8 +87,10 @@ def configure_dvh(dvh, level):
         cmd2_enable = '0'
 
     cmd = 'echo %s > /sys/kernel/debug/dvh/%s' % (enable, dvh)
-#    cmd2 = 'echo %s > /sys/kernel/debug/kvm/%s' % (cmd2_enable, cmd2_name)
-    #child.sendline(cmd + ";" + cmd2)
+    if old_options:
+        cmd2 = 'echo %s > /sys/kernel/debug/kvm/%s' % (cmd2_enable, cmd2_name)
+        cmd = cmd + ';' + cmd2
+
     child.sendline(cmd)
 
 ### Main function start ###
