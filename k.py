@@ -10,6 +10,7 @@ import argparse
 
 # L<x>
 target_level = 3
+boot_level = target_level
 
 ###### DVH config ###################
 dvh_vp = True
@@ -123,6 +124,9 @@ for l in range(target_level):
     if dry_run:
         print(cmd)
         continue
+
+    if boot_level == l:
+        break
 
     child.sendline(cmd)
     child.expect(pin_waiting)
