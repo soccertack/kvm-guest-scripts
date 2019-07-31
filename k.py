@@ -38,11 +38,11 @@ pin_waiting='waiting for connection.*server'
 dvh_vp_cmd = []
 for l in range(target_level):
     if l == 0:
-        dvh_vp_cmd.append(cmd_viommu + QEMU)
+        dvh_vp_cmd.append(cmd_viommu + PI)
     elif l == target_level - 1:
         dvh_vp_cmd.append(cmd_vfio)
     else:
-        dvh_vp_cmd.append(cmd_vfio_viommu + QEMU)
+        dvh_vp_cmd.append(cmd_vfio_viommu + PI)
 
 hostname = os.popen('hostname | cut -d . -f1').read().strip()
 hostnames = []
