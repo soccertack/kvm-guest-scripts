@@ -18,6 +18,7 @@ dvh_idle = ['Y'] * target_level
 dvh_idle[0] = 'N'
 dvh_ipi = ['Y'] * target_level
 dvh_timer = ['Y'] * target_level
+dvh_fs_base = ['Y'] * target_level
 
 dry_run = False
 old_options = True
@@ -78,6 +79,9 @@ def configure_dvh(dvh, level):
     elif dvh == 'virtual_timer':
         enable = dvh_timer[level]
         cmd2_name = 'timer_opt'
+    elif dvh == 'fs_base':
+        enable = dvh_fs_base[level]
+        cmd2_name = ''
     else:
         print ("invalid dvh name: %s", dvh)
         sys.exit(0)
@@ -107,7 +111,7 @@ wait_for_prompt(child, hostname)
 
 for l in range(target_level):
 
-    for dvh_feature in ['virtual_idle', 'virtual_ipi', 'virtual_timer']:
+    for dvh_feature in ['virtual_idle', 'virtual_ipi', 'virtual_timer', 'fs_base']:
         configure_dvh(dvh_feature, l)
         if dry_run:
             wait_for_prompt(child, hostnames[0])
