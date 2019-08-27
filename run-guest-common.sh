@@ -15,6 +15,7 @@ MODERN="disable-modern=off,disable-legacy=on"
 OV=""
 TELNET_PORT=4444
 WAIT="nowait"
+MON="-monitor telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
