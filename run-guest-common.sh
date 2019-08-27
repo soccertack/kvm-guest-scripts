@@ -279,11 +279,12 @@ if [ -n "$MIGRAION_SET" ]; then
 
 		# Tweak params which conflict with the source
 		USER_NETDEV=`echo $USER_NETDEV | sed  "s/2222/2223/"`
+		MONITOR_F=1
 	elif [ -n "$M_FILE" ]; then
 		MIGRAION=(-incoming "exec: gzip -c -d $M_FILE")
+		MONITOR_F=1
 	fi
 
-	MONITOR_F=1
 	set_remote_fs guest0.img
 
 	if [ "$WINDOWS" == 1 ]; then

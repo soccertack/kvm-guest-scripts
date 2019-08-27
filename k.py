@@ -9,7 +9,7 @@ import socket
 import argparse
 
 # L<x>
-target_level = 3
+target_level = 2
 boot_level = target_level
 
 ###### DVH config ###################
