@@ -321,6 +321,6 @@ fi
 
 if [ "$IS_HOST" == 1 ]; then
 	# Install host ssh key to VM
-	source ssh-key-check.sh
+	source ssh-key-check.sh $FS
 fi
 

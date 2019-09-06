@@ -16,5 +16,5 @@ if [ "$PUB_KEY" -ot "$PRI_KEY" ]; then
 fi
 
 pushd /tmp/env/scripts
-source ./mount-and-copy-ssh-key.sh
+source ./mount-and-copy-ssh-key.sh $1
 popd
