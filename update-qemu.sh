@@ -1,6 +1,7 @@
 #!/bin/bash
 
-rm -rf qemu
-
+ls -al qemu
 read -p 'qemu: ' QEMU
+
+rm -rf qemu
 ln -s $QEMU qemu
