@@ -58,5 +58,5 @@ sudo $QEMU	\
 	$OV			\
 	$DBG_BIOS		\
 	$CDROM			\
-	$VNC
+	$VNC			\
 #	-trace enable=vfio_region_setup,file=abc \
