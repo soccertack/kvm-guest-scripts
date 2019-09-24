@@ -16,6 +16,7 @@ OV=""
 TELNET_PORT=4444
 WAIT="nowait"
 MON="-monitor telnet:127.0.0.1:$TELNET_PORT,server,nowait"
+QEMU_APPEND=""
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -64,6 +65,7 @@ usage() {
 	U="$U    -s | --serial <file>:  Output console to <file>\n"
 	U="$U    -i | --image <image>:  Use <image> as block device (default $FS)\n"
 	U="$U    -a | --append <snip>:  Add <snip> to the kernel cmdline\n"
+	U="$U    -p | --qemu-append <snip>:  Add <snip> to the QEMU cmdline\n" 
 	U="$U    -v | --smmu <version>:  Specify SMMUv3 patch version\n"
 	U="$U    -q | --mq <nr>:        Number of multiqueus for virtio-net\n"
 	U="$U    -u | --qemu <src_path> : Use qemu in the given path\n"
@@ -124,6 +126,10 @@ do
 		;;
 	  -a | --append)
 		CMDLINE="$2"
+		shift 2
+		;;
+	  -p | --qemu-append)
+		QEMU_APPEND="$2"
 		shift 2
 		;;
 	  -v | --smmu)
