@@ -2,7 +2,6 @@ IOMMU="-device intel-iommu,intremap=on"
 MACHINE="${MACHINE},kernel-irqchip=split"
 
 if [ "$PI" == 1 ]; then
-	QEMU="./qemu-pi/x86_64-softmmu/qemu-system-x86_64"
 	IOMMU="$IOMMU,intpost=on"
 fi
 
