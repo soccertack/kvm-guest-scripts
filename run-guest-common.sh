@@ -324,7 +324,8 @@ if [ "$XEN" == 1 ]; then
 	MEMSIZE=`expr $MEMSIZE + 1`
 fi
 
-if [ "$IS_HOST" == 1 ]; then
+hostname=`hostname | cut -d . -f1`
+if [[ $hostname == 'kvm-node' && "$IS_HOST" == 1 ]]; then
 	# Install host ssh key to VM
 	if [ "$WINDOWS" != 1 ]; then
 		source ssh-key-check.sh $FS
