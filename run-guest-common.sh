@@ -103,8 +103,8 @@ do
 		shift 1
 		;;
 	  -t | --migration-dst)
-		M_PORT=5555
 		MIGRAION_SET=1
+		MIGRAION_DST=1
 		shift 1
 		;;
 	  -l | --migration-dst-file)
@@ -279,7 +279,8 @@ set_remote_fs () {
 
 # Migration related settings
 if [ -n "$MIGRAION_SET" ]; then
-	if [ -n "$M_PORT" ]; then
+	if [ -n "$MIGRAION_DST" ]; then
+		M_PORT=5555
 		TELNET_PORT=4445
 		MIGRAION=(-incoming tcp:0:$M_PORT)
 
@@ -325,7 +326,7 @@ if [ "$XEN" == 1 ]; then
 fi
 
 hostname=`hostname | cut -d . -f1`
-if [[ $hostname == 'kvm-node' && "$IS_HOST" == 1 ]]; then
+if [ -z $MIGRAION_DST ]  && [ "$IS_HOST" == 1 ]; then
 	# Install host ssh key to VM
 	if [ "$WINDOWS" != 1 ]; then
 		source ssh-key-check.sh $FS
