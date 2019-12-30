@@ -17,6 +17,7 @@ TELNET_PORT=4444
 WAIT="nowait"
 MON="-monitor telnet:127.0.0.1:$TELNET_PORT,server,nowait"
 QEMU_APPEND=""
+EXTRA_VNET=""
 
 #Check if we are on a bare-metal machine
 uname -n | grep -q cloudlab
@@ -155,6 +156,10 @@ do
 		MONITOR_F=1
 		shift 1
 		;;
+	  --extra)
+		EXTRA_VNET=1
+		shift 1
+		;;
 	  --pi)
 		PI=1
 		shift 1
@@ -260,11 +265,27 @@ find_available_mac() {
     MAC=$MAC_PREFIX$x":"$y$z
 }
 
+add_extra_virtionet () {
+	EXTRA_VNET="-netdev tap,id=net9,vhost=on"
+	EXTRA_VNET="$EXTRA_VNET,helper=/srv/vm/qemu/qemu-bridge-helper"
+
+	EXTRA_VNET="$EXTRA_VNET -device virtio-net-pci,netdev=net9"
+	if [ ! $MODERN == "" ]; then
+		EXTRA_VNET="$EXTRA_VNET,$MODERN"
+	fi
+	find_available_mac 9
+	EXTRA_VNET="$EXTRA_VNET,mac=$MAC"
+}
+
 find_available_mac 1
 VIRTIO_NETDEV="$VIRTIO_NETDEV,mac=$MAC"
 
 find_available_mac 2
 USER_NETDEV="$USER_NETDEV,mac=$MAC"
+
+if [[ -n $EXTRA_VNET ]]; then
+	add_extra_virtionet
+fi
 
 set_remote_fs () {
 	mount | grep vm_nfs 2>&1 > /dev/null

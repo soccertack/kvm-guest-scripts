@@ -60,4 +60,5 @@ sudo $QEMU	\
 	$CDROM			\
 	$VNC			\
 	$QEMU_APPEND		\
+	$EXTRA_VNET		\
 #	-trace enable=vfio_region_setup,file=abc \
